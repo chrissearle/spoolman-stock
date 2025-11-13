@@ -8,11 +8,12 @@ data class StockSummary(
     val stock: Int,
     val count: Int,
     val color: String,
+    val unopened: Int,
 ) {
     @Suppress("JoinDeclarationAndAssignment")
     val requiredStock: Int
 
     init {
-        requiredStock = if (count < stock) stock - count else 0
+        requiredStock = if (unopened < stock) stock - unopened else 0
     }
 }

@@ -18,7 +18,11 @@ data class Spool(
     val shopUrl: String? = null,
     @SerialName("filament.extra.stock")
     val stock: Int? = null,
-)
+    @SerialName("first_used")
+    val firstUsed: String? = null,
+) {
+    fun started() = !firstUsed.isNullOrBlank()
+}
 
 fun String?.normalizeShopUrl(): String? {
     if (this == null) return null

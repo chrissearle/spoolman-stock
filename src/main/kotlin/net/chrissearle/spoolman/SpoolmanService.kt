@@ -35,11 +35,13 @@ class SpoolmanService(
             .groupBy { it.filamentId }
             .map { (_, group) ->
                 val first = group.first()
+
                 StockSummary(
                     shop = first.shopUrl!!,
                     stock = first.stock!!,
                     count = group.size,
                     color = first.filamentColor!!.color(),
+                    unopened = group.count { !it.started() },
                 )
             }
 
