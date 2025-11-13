@@ -23,16 +23,19 @@ data class Spool(
 fun String?.normalizeShopUrl(): String? {
     if (this == null) return null
 
-    // Trim whitespace first
     val s = this.trim()
+    var result = s
 
-    if (s.startsWith("\\\"") && s.endsWith("\\\"") && s.length >= 4) {
-        return s.substring(2, s.length - 2)
+    @Suppress("MagicNumber")
+    when {
+        // Case: \"https://example.com\"
+        s.startsWith("\\\"") && s.endsWith("\\\"") && s.length >= 4 ->
+            result = s.substring(2, s.length - 2)
+
+        // Case: "https://example.com"
+        s.startsWith("\"") && s.endsWith("\"") && s.length >= 2 ->
+            result = s.substring(1, s.length - 1)
     }
 
-    if (s.startsWith("\"") && s.endsWith("\"") && s.length >= 2) {
-        return s.substring(1, s.length - 1)
-    }
-
-    return s
+    return result
 }
