@@ -9,6 +9,9 @@ data class StockSummary(
     val count: Int,
     val color: String,
     val unopened: Int,
+    val name: String?,
+    val material: String?,
+    val vendor: String?,
 ) {
     @Suppress("JoinDeclarationAndAssignment")
     val requiredStock: Int

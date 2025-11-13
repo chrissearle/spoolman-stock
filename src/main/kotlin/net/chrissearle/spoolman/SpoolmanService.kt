@@ -34,15 +34,18 @@ class SpoolmanService(
             .filter { !it.filamentColor.isNullOrBlank() }
             .groupBy { it.filamentId }
             .map { (_, group) ->
-                val first = group.first()
-
-                StockSummary(
-                    shop = first.shopUrl!!,
-                    stock = first.stock!!,
-                    count = group.size,
-                    color = first.filamentColor!!.color(),
-                    unopened = group.count { !it.started() },
-                )
+                group.first().let {
+                    StockSummary(
+                        shop = it.shopUrl!!,
+                        stock = it.stock!!,
+                        count = group.size,
+                        color = it.filamentColor!!.color(),
+                        unopened = group.count { spool -> !spool.started() },
+                        name = it.filamentName,
+                        material = it.filamentMaterial,
+                        vendor = it.filamentVendor,
+                    )
+                }
             }
 
     context(raise: Raise<ApiError>)
