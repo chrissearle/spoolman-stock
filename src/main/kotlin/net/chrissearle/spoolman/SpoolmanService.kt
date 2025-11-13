@@ -31,6 +31,7 @@ class SpoolmanService(
             .filter { it.stock!! > 0 }
             .map { it.copy(shopUrl = it.shopUrl.normalizeShopUrl()) }
             .filter { !it.shopUrl.isNullOrBlank() }
+            .filter { !it.filamentColor.isNullOrBlank() }
             .groupBy { it.filamentId }
             .map { (_, group) ->
                 val first = group.first()
@@ -38,6 +39,7 @@ class SpoolmanService(
                     shop = first.shopUrl!!,
                     stock = first.stock!!,
                     count = group.size,
+                    color = first.filamentColor!!.color(),
                 )
             }
 
@@ -64,6 +66,8 @@ class SpoolmanService(
 
         return this
     }
+
+    private fun String.color() = "#${this.uppercase()}"
 }
 
 fun Application.spoolmanService(client: HttpClient) =

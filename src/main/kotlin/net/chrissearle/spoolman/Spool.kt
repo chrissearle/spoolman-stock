@@ -12,6 +12,8 @@ data class Spool(
     val price: Int? = null,
     @SerialName("filament.id")
     val filamentId: Int,
+    @SerialName("filament.color_hex")
+    val filamentColor: String? = null,
     @SerialName("filament.extra.shop")
     val shopUrl: String? = null,
     @SerialName("filament.extra.stock")
