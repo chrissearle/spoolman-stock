@@ -37,6 +37,7 @@ jobs:
           SERVICE="spoolman.home.chrissearle.org"
           IMAGE="ghcr.io/${{ github.repository_owner }}/spoolman-stock"
           TAG="${{ github.ref_name }}"
+          FILENAME="stock"
 
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
