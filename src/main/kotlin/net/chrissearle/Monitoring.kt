@@ -1,5 +1,7 @@
 package net.chrissearle
 
+import com.sksamuel.cohort.Cohort
+import com.sksamuel.cohort.HealthCheckRegistry
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.Application
@@ -17,11 +19,13 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import kotlinx.coroutines.Dispatchers
 import org.slf4j.event.Level
+import kotlin.time.Duration.Companion.seconds
 
 private val logger = KotlinLogging.logger {}
 
-fun Application.configureMonitoring() {
+fun Application.configureMonitoring(upstreamHealthCheck: UpstreamHealthCheck) {
     val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
     install(MicrometerMetrics) {
@@ -45,6 +49,15 @@ fun Application.configureMonitoring() {
             callId.isNotEmpty()
         }
     }
+
+    val readinessChecks =
+        HealthCheckRegistry(Dispatchers.IO) {
+            register("upstream-api", upstreamHealthCheck, 3.seconds, 10.seconds)
+        }
+    install(Cohort) {
+        healthcheck("/stock/readiness", readinessChecks)
+    }
+
     routing {
         get("/stock/api/metrics") {
             logger.logCall(call)

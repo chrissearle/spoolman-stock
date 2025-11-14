@@ -1,5 +1,6 @@
 [versions]
 arrow = "2.2.0"
+cohort = "2.8.0"
 dependency_analysis = "3.4.1"
 detekt = "1.23.8"
 gradle_versions_filter = "0.1.16"
@@ -16,6 +17,8 @@ prometheus = "1.15.5"
 
 [libraries]
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
+
+cohort = { group = "com.sksamuel.cohort", name="cohort-ktor", version.ref = "cohort" }
 
 kotlin-logging = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlin_logging" }
 
@@ -53,7 +56,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 ktor-server = ["ktor-server-call-id", "ktor-server-call-logging", "ktor-server-content-negotiation", "ktor-server-core", "ktor-server-metrics-micrometer", "ktor-server-cio", "ktor-server-status-pages", "ktor-server-html-builder"]
 ktor-client = ["ktor-client-content-negotiation", "ktor-client-core", "ktor-client-logging", "ktor-client-cio"]
 serialization = ["ktor-serialization", "kotlinx-serialization", "kotlinx-datetime"]
-monitoring = ["kotlin-logging", "micrometer-registry-prometheus"]
+monitoring = ["kotlin-logging", "micrometer-registry-prometheus", "cohort"]
 test = ["ktor-server-test-host", "kotest", "kotest-assertions", "ktor-client-mock", "mockk"]
 
 [plugins]

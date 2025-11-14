@@ -15,7 +15,6 @@ import io.ktor.server.application.Application
 import net.chrissearle.api.ApiError
 import net.chrissearle.api.ErrorResponse
 import net.chrissearle.api.SpoolmanCallFailed
-import net.chrissearle.confStr
 
 private val logger = KotlinLogging.logger {}
 
@@ -75,8 +74,10 @@ class SpoolmanService(
     private fun String.color() = "#${this.uppercase()}"
 }
 
-fun Application.spoolmanService(client: HttpClient) =
-    SpoolmanService(
-        confStr("spoolman.url"),
-        client,
-    )
+fun Application.spoolmanService(
+    client: HttpClient,
+    url: String
+) = SpoolmanService(
+    url,
+    client,
+)
