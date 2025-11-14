@@ -7,13 +7,14 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.testApplication
+import io.mockk.mockk
 
 class MetricsTest :
     FunSpec({
         test("Metrics are provided") {
             testApplication {
                 application {
-                    configureMonitoring()
+                    configureMonitoring(mockk<UpstreamHealthCheck>())
                 }
 
                 client.get("/stock/api/metrics").apply {

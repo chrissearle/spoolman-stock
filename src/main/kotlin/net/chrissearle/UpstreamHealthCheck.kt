@@ -11,6 +11,8 @@ class UpstreamHealthCheck(
     private val url: String
 ) : HealthCheck {
     override suspend fun check(): HealthCheckResult =
+
+        @Suppress("TooGenericExceptionCaught")
         try {
             val response = client.get(url)
             if (response.status == HttpStatusCode.OK) {
