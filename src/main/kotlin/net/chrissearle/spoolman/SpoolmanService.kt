@@ -11,7 +11,6 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.isSuccess
-import io.ktor.server.application.Application
 import net.chrissearle.api.ApiError
 import net.chrissearle.api.ErrorResponse
 import net.chrissearle.api.SpoolmanCallFailed
@@ -24,8 +23,7 @@ class SpoolmanService(
 ) {
     context(raise: Raise<ApiError>)
     suspend fun fetchStock() =
-        fetch()
-            .filter { !it.archived }
+        fetchSpoolData()
             .filter { it.stock != null }
             .filter { it.stock!! > 0 }
             .map { it.copy(shopUrl = it.shopUrl.normalizeShopUrl()) }
@@ -46,6 +44,16 @@ class SpoolmanService(
                     )
                 }
             }
+
+    context(raise: Raise<ApiError>)
+    suspend fun fetchSpools() =
+        fetchSpoolData()
+            .map { it.toLabel() }
+
+    context(raise: Raise<ApiError>)
+    private suspend fun fetchSpoolData() =
+        fetch()
+            .filter { !it.archived }
 
     context(raise: Raise<ApiError>)
     suspend fun fetch() =
@@ -72,9 +80,18 @@ class SpoolmanService(
     }
 
     private fun String.color() = "#${this.uppercase()}"
+
+    private fun Spool.toLabel() =
+        SpoolLabel(
+            id = this.id,
+            comment = this.comment,
+            name = this.filamentName,
+            material = this.filamentMaterial,
+            vendor = this.filamentVendor
+        )
 }
 
-fun Application.spoolmanService(
+fun spoolmanService(
     client: HttpClient,
     url: String
 ) = SpoolmanService(

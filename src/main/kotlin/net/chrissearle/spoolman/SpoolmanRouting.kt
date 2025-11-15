@@ -21,7 +21,6 @@ import kotlinx.html.p
 import kotlinx.html.script
 import kotlinx.html.style
 import kotlinx.html.title
-import net.chrissearle.UpstreamHealthCheck
 import net.chrissearle.api.respond
 import net.chrissearle.api.respondHtml
 import net.chrissearle.logCall
@@ -31,12 +30,22 @@ private val logger = KotlinLogging.logger {}
 fun Application.configureSpoolmanRouting(service: SpoolmanService) {
     routing {
         route("/stock") {
-            get("/api/stock.json") {
-                logger.logCall(call)
+            route("/api") {
+                get("/spools") {
+                    logger.logCall(call)
 
-                either {
-                    service.fetchStock()
-                }.respond()
+                    either {
+                        service.fetchSpools()
+                    }.respond()
+                }
+
+                get("/stock") {
+                    logger.logCall(call)
+
+                    either {
+                        service.fetchStock()
+                    }.respond()
+                }
             }
 
             get {

@@ -10,6 +10,7 @@ kotlin = "2.2.21"
 kotlinter = "5.2.0"
 kotlinx_datetime = "0.7.1"
 kotlinx_serialization = "1.9.0"
+kotlinx_serialization_csv = "3.2.0"
 ktor = "3.3.2"
 logback = "1.5.20"
 mockk = "1.14.6"
@@ -40,6 +41,7 @@ ktor-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-jso
 
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx_datetime" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx_serialization" }
+kotlinx-serialization-csv = { group = "de.brudaswen.kotlinx.serialization", name = "kotlinx-serialization-csv", version.ref = "kotlinx_serialization_csv" }
 
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 
@@ -55,7 +57,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 [bundles]
 ktor-server = ["ktor-server-call-id", "ktor-server-call-logging", "ktor-server-content-negotiation", "ktor-server-core", "ktor-server-metrics-micrometer", "ktor-server-cio", "ktor-server-status-pages", "ktor-server-html-builder"]
 ktor-client = ["ktor-client-content-negotiation", "ktor-client-core", "ktor-client-logging", "ktor-client-cio"]
-serialization = ["ktor-serialization", "kotlinx-serialization", "kotlinx-datetime"]
+serialization = ["ktor-serialization", "kotlinx-serialization", "kotlinx-datetime", "kotlinx-serialization-csv"]
 monitoring = ["kotlin-logging", "micrometer-registry-prometheus", "cohort"]
 test = ["ktor-server-test-host", "kotest", "kotest-assertions", "ktor-client-mock", "mockk"]
 
