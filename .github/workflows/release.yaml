@@ -43,5 +43,5 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: token ${FLUX_REPO_TOKEN}" \
             https://api.github.com/repos/chrissearle/flux-home/dispatches \
-            -d "$(jq -n --arg svc "$SERVICE" --arg img "$IMAGE" --arg tag "$TAG" \
-              '{event_type:"bump-image", client_payload:{service:$svc, image:$img, tag:$tag}}')"
+            -d "$(jq -n --arg svc "$SERVICE" --arg img "$IMAGE" --arg tag "$TAG" --arg filename "$FILENAME"\
+              '{event_type:"bump-image", client_payload:{service:$svc, image:$img, tag:$tag, filename:$filename}}')"
