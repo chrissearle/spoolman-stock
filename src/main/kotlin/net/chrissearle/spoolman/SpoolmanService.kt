@@ -19,6 +19,7 @@ private val logger = KotlinLogging.logger {}
 
 class SpoolmanService(
     val apiUrl: String,
+    val viewPrefix: String,
     val httpClient: HttpClient,
 ) {
     context(raise: Raise<ApiError>)
@@ -48,7 +49,7 @@ class SpoolmanService(
     context(raise: Raise<ApiError>)
     suspend fun fetchSpools() =
         fetchSpoolData()
-            .map { it.toLabel() }
+            .map { it.toLabel(viewPrefix) }
 
     context(raise: Raise<ApiError>)
     private suspend fun fetchSpoolData() =
@@ -81,20 +82,23 @@ class SpoolmanService(
 
     private fun String.color() = "#${this.uppercase()}"
 
-    private fun Spool.toLabel() =
+    private fun Spool.toLabel(viewPrefix: String) =
         SpoolLabel(
             id = this.id,
             comment = this.comment,
             name = this.filamentName,
             material = this.filamentMaterial,
-            vendor = this.filamentVendor
+            vendor = this.filamentVendor,
+            viewLink = "$viewPrefix${this.id}"
         )
 }
 
 fun spoolmanService(
     client: HttpClient,
-    url: String
+    spools: String,
+    viewPrefix: String
 ) = SpoolmanService(
-    url,
+    spools,
+    viewPrefix,
     client,
 )

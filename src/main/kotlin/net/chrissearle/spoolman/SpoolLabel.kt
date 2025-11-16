@@ -9,4 +9,5 @@ data class SpoolLabel(
     val name: String? = null,
     val material: String? = null,
     val vendor: String? = null,
+    val viewLink: String,
 )
