@@ -18,57 +18,76 @@ import net.chrissearle.api.SpoolmanCallFailed
 private val logger = KotlinLogging.logger {}
 
 class SpoolmanService(
-    val apiUrl: String,
+    val spoolsUrl: String,
+    val filamentsUrl: String,
     val viewPrefix: String,
     val httpClient: HttpClient,
 ) {
     context(raise: Raise<ApiError>)
-    suspend fun fetchStock() =
-        fetchSpoolData()
-            .filter { it.stock != null }
-            .filter { it.stock!! > 0 }
-            .map { it.copy(shopUrl = it.shopUrl.normalizeShopUrl()) }
-            .filter { !it.shopUrl.isNullOrBlank() }
-            .filter { !it.filamentColor.isNullOrBlank() }
-            .groupBy { it.filamentId }
-            .map { (_, group) ->
-                group.first().let {
-                    StockSummary(
-                        shop = it.shopUrl!!,
-                        stock = it.stock!!,
-                        count = group.size,
-                        color = it.filamentColor!!.color(),
-                        unopened = group.count { spool -> !spool.started() },
-                        name = it.filamentName,
-                        material = it.filamentMaterial,
-                        vendor = it.filamentVendor,
-                    )
-                }
-            }
+    suspend fun stockSummaries(): List<StockSummary> {
+        val spools = unarchivedSpools()
+
+        return stockFilaments()
+            .map { filament ->
+                val matchingSpools = spools.filter { it.filamentId == filament.id }
+
+                StockSummary(
+                    shop = filament.shopUrl!!,
+                    stock = filament.stock!!,
+                    count = matchingSpools.size,
+                    color = filament.color!!.color(),
+                    unopened = matchingSpools.count { spool -> !spool.started() },
+                    name = filament.name,
+                    material = filament.material,
+                    vendor = filament.vendor,
+                )
+            }.also { logger.info { "Successfully fetched ${it.count()} stock spools." } }
+    }
 
     context(raise: Raise<ApiError>)
-    suspend fun fetchSpools() =
-        fetchSpoolData()
+    suspend fun stockFilaments() =
+        fetchFilaments()
+            .filter { it.stock != null }
+            .filter { it.stock!! > 0 }
+            .filter { !it.shopUrl.isNullOrBlank() }
+            .filter { it.color != null }
+            .map { it.copy(shopUrl = it.shopUrl!!.normalizeShopUrl()) }
+            .also { logger.info { "Successfully fetched ${it.count()} stock filaments." } }
+
+    context(raise: Raise<ApiError>)
+    suspend fun spoolLabels() =
+        unarchivedSpools()
             .map { it.toLabel(viewPrefix) }
 
     context(raise: Raise<ApiError>)
-    private suspend fun fetchSpoolData() =
-        fetch()
+    private suspend fun unarchivedSpools() =
+        fetchSpools()
             .filter { !it.archived }
+            .also { logger.info { "Successfully fetched ${it.count()} non-archived spools." } }
 
     context(raise: Raise<ApiError>)
-    suspend fun fetch() =
+    suspend fun fetchSpools() =
+        fetch<Spool>(spoolsUrl)
+            .also { logger.info { "Successfully fetched ${it.count()} spools." } }
+
+    context(raise: Raise<ApiError>)
+    suspend fun fetchFilaments() =
+        fetch<Filament>(filamentsUrl)
+            .also { logger.info { "Successfully fetched ${it.count()} filaments." } }
+
+    context(raise: Raise<ApiError>)
+    suspend inline fun <reified T> fetch(url: String) =
         httpClient
-            .request(apiUrl) {
+            .request(url) {
                 headers {
                     append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     append(HttpHeaders.Accept, ContentType.Application.Json.toString())
                 }
             }.valid()
-            .body<List<Spool>>()
+            .body<List<T>>()
 
     context(raise: Raise<ApiError>)
-    private suspend fun HttpResponse.valid(): HttpResponse {
+    suspend fun HttpResponse.valid(): HttpResponse {
         raise.ensure(this.status.isSuccess()) {
             val upstreamBody = this.body<String>()
 
@@ -96,9 +115,11 @@ class SpoolmanService(
 fun spoolmanService(
     client: HttpClient,
     spools: String,
-    viewPrefix: String
+    viewPrefix: String,
+    filaments: String
 ) = SpoolmanService(
     spools,
+    filaments,
     viewPrefix,
     client,
 )

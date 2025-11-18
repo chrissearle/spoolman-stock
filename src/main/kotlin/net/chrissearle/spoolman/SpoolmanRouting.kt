@@ -35,7 +35,7 @@ fun Application.configureSpoolmanRouting(service: SpoolmanService) {
                     logger.logCall(call)
 
                     either {
-                        service.fetchSpools()
+                        service.spoolLabels()
                     }.respond()
                 }
 
@@ -43,14 +43,14 @@ fun Application.configureSpoolmanRouting(service: SpoolmanService) {
                     logger.logCall(call)
 
                     either {
-                        service.fetchStock()
+                        service.stockSummaries()
                     }.respond()
                 }
             }
 
             get {
                 either {
-                    service.fetchStock()
+                    service.stockSummaries()
                 }.respondHtml { stock ->
                     attributes["data-bs-theme"] = "dark"
 

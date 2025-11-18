@@ -12,12 +12,13 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 fun Application.module() {
     val client = configureClient()
 
-    val upstream = confStr("spoolman.spools")
+    val filamentsUrl = confStr("spoolman.filaments")
+    val spoolsUrl = confStr("spoolman.spools")
 
     val upstreamHealthCheck =
         UpstreamHealthCheck(
             client = client,
-            url = upstream
+            url = spoolsUrl
         )
 
     configureSerialization()
@@ -26,7 +27,8 @@ fun Application.module() {
     configureSpoolmanRouting(
         spoolmanService(
             client = client,
-            spools = upstream,
+            filaments = filamentsUrl,
+            spools = spoolsUrl,
             viewPrefix = confStr("spoolman.spoolPrefix")
         )
     )

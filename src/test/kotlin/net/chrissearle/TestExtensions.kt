@@ -7,6 +7,7 @@ import io.ktor.client.request.HttpRequestData
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.testing.ApplicationTestBuilder
+import kotlinx.serialization.json.Json
 import java.util.UUID
 
 fun randomString() = UUID.randomUUID().toString()
@@ -14,14 +15,28 @@ fun randomString() = UUID.randomUUID().toString()
 fun buildClient(engine: MockEngine): HttpClient =
     HttpClient(engine) {
         install(ContentNegotiation) {
-            json()
+            json(
+                Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                    explicitNulls = false
+                },
+            )
         }
     }
 
 fun ApplicationTestBuilder.buildTestClient() =
     createClient {
         this.install(ContentNegotiation) {
-            json()
+            json(
+                Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                    explicitNulls = false
+                },
+            )
         }
     }
 

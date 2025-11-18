@@ -1,0 +1,112 @@
+[
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101064/fiberlogy-matte-petg-black",
+    "stock": 1,
+    "count": 1,
+    "color": "#000000",
+    "unopened": 0,
+    "name": "Matte PETG Black",
+    "material": "PETG",
+    "vendor": "Fiberlogy",
+    "requiredStock": 1
+  },
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101109/fiberlogy-fiberflex-40d-black",
+    "stock": 1,
+    "count": 1,
+    "color": "#000000",
+    "unopened": 1,
+    "name": "Fiberflex 40D Black",
+    "material": "TPU",
+    "vendor": "Fiberlogy",
+    "requiredStock": 0
+  },
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101060/fiberlogy-easy-petg-white",
+    "stock": 1,
+    "count": 1,
+    "color": "#FFFFFF",
+    "unopened": 0,
+    "name": "EASY PET-G White",
+    "material": "PETG",
+    "vendor": "Fiberlogy",
+    "requiredStock": 1
+  },
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101042/fiberlogy-easy-petg-gray",
+    "stock": 2,
+    "count": 1,
+    "color": "#A8A8A8",
+    "unopened": 0,
+    "name": "EASY PET-G Gray",
+    "material": "PETG",
+    "vendor": "Fiberlogy",
+    "requiredStock": 2
+  },
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101037/fiberlogy-easy-petg-black",
+    "stock": 2,
+    "count": 3,
+    "color": "#000000",
+    "unopened": 2,
+    "name": "EASY PET-G Black",
+    "material": "PETG",
+    "vendor": "Fiberlogy",
+    "requiredStock": 0
+  },
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101116/fiberlogy-fiberflex-40d-orange",
+    "stock": 1,
+    "count": 1,
+    "color": "#EF6935",
+    "unopened": 0,
+    "name": "Fiberflex 40D Orange",
+    "material": "TPU",
+    "vendor": "Fiberlogy",
+    "requiredStock": 1
+  },
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101038/fiberlogy-easy-petg-blue",
+    "stock": 1,
+    "count": 3,
+    "color": "#1F8FE7",
+    "unopened": 2,
+    "name": "EASY PET-G Blue",
+    "material": "PETG",
+    "vendor": "Fiberlogy",
+    "requiredStock": 0
+  },
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101041/fiberlogy-easy-petg-graphite",
+    "stock": 2,
+    "count": 4,
+    "color": "#40454C",
+    "unopened": 3,
+    "name": "EASY PET-G Graphite",
+    "material": "PETG",
+    "vendor": "Fiberlogy",
+    "requiredStock": 0
+  },
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101056/fiberlogy-easy-petg-red",
+    "stock": 1,
+    "count": 1,
+    "color": "#BB2826",
+    "unopened": 0,
+    "name": "EASY PET-G Red",
+    "material": "PETG",
+    "vendor": "Fiberlogy",
+    "requiredStock": 1
+  },
+  {
+    "shop": "https://polyalkemi.no/fiberlogy/101061/fiberlogy-easy-petg-yellow",
+    "stock": 1,
+    "count": 1,
+    "color": "#FCD240",
+    "unopened": 1,
+    "name": "EASY PET-G Yellow",
+    "material": "PETG",
+    "vendor": "Fiberlogy",
+    "requiredStock": 0
+  }
+]
