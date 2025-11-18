@@ -19,4 +19,4 @@ data class Filament(
     val shopUrl: String? = null,
     @SerialName("extra.stock")
     val stock: Int? = null,
- )
+)

@@ -29,4 +29,3 @@ data class Spool(
 ) {
     fun started() = !firstUsed.isNullOrBlank()
 }
-
