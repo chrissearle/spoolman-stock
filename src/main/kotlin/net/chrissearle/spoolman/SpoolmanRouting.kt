@@ -137,7 +137,7 @@ private fun DIV.spoolItem(item: StockSummary) {
                     p {
                         classes = setOf("text-body-secondary", "fs-6", "m-0", "p-0")
 
-                        +"Target: ${item.stock} - Actual: ${item.stock} - Unopened: ${item.unopened}"
+                        +"Target: ${item.stock} - Actual: ${item.count} - Unopened: ${item.unopened}"
                     }
                 }
             }
