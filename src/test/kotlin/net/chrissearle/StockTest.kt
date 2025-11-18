@@ -15,9 +15,9 @@ import io.ktor.http.headersOf
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import io.ktor.utils.io.ByteReadChannel
-import net.chrissearle.spoolman.SpoolmanService
 import net.chrissearle.spoolman.StockSummary
 import net.chrissearle.spoolman.configureSpoolmanRouting
+import net.chrissearle.spoolman.spoolmanService
 
 class StockTest :
     FunSpec({
@@ -106,10 +106,10 @@ class StockTest :
     })
 
 private fun buildService(engine: MockEngine) =
-    SpoolmanService(
-        spoolsUrl = "/spools",
-        filamentsUrl = "/filaments",
-        httpClient = buildClient(engine),
+    spoolmanService(
+        spools = "/spools",
+        filaments = "/filaments",
+        client = buildClient(engine),
         viewPrefix = ""
     )
 

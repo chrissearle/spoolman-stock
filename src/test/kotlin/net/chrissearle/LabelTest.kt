@@ -1,6 +1,5 @@
 package net.chrissearle
 
-import arrow.core.raise.either
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.client.call.body
@@ -16,9 +15,8 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import io.ktor.utils.io.ByteReadChannel
 import net.chrissearle.spoolman.SpoolLabel
-import net.chrissearle.spoolman.SpoolmanService
-import net.chrissearle.spoolman.StockSummary
 import net.chrissearle.spoolman.configureSpoolmanRouting
+import net.chrissearle.spoolman.spoolmanService
 
 class LabelTest :
     FunSpec({
@@ -53,10 +51,10 @@ class LabelTest :
     })
 
 private fun buildService(engine: MockEngine) =
-    SpoolmanService(
-        spoolsUrl = "/spools",
-        filamentsUrl = "/filaments",
-        httpClient = buildClient(engine),
+    spoolmanService(
+        spools = "/spools",
+        filaments = "/filaments",
+        client = buildClient(engine),
         viewPrefix = ""
     )
 
