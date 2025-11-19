@@ -1,4 +1,4 @@
-package net.chrissearle.spoolman
+package net.chrissearle.spoolman.scan
 
 import arrow.core.raise.either
 import arrow.core.raise.ensure

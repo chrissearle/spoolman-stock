@@ -17,8 +17,8 @@ import io.ktor.server.testing.testApplication
 import io.ktor.utils.io.ByteReadChannel
 import net.chrissearle.spoolman.ApiConfig
 import net.chrissearle.spoolman.SpoolmanApi
-import net.chrissearle.spoolman.StockSummary
 import net.chrissearle.spoolman.configureSpoolmanRouting
+import net.chrissearle.spoolman.model.StockSummary
 import net.chrissearle.spoolman.spoolmanApi
 import net.chrissearle.spoolman.spoolmanService
 

@@ -18,6 +18,9 @@ import net.chrissearle.api.ApiError
 import net.chrissearle.api.ErrorResponse
 import net.chrissearle.api.SpoolNotFound
 import net.chrissearle.api.SpoolmanCallFailed
+import net.chrissearle.spoolman.model.Filament
+import net.chrissearle.spoolman.model.Spool
+import net.chrissearle.spoolman.model.SpoolWithLocation
 
 private val logger = KotlinLogging.logger {}
 

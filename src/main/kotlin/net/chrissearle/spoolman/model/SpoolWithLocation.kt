@@ -1,4 +1,4 @@
-package net.chrissearle.spoolman
+package net.chrissearle.spoolman.model
 
 import kotlinx.serialization.Serializable
 

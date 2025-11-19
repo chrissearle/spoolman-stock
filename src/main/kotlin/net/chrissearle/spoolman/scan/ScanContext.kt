@@ -1,4 +1,4 @@
-package net.chrissearle.spoolman
+package net.chrissearle.spoolman.scan
 
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration.Companion.minutes

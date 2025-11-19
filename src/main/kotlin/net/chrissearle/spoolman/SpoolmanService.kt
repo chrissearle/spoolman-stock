@@ -5,6 +5,11 @@ import arrow.core.raise.context.ensure
 import io.github.oshai.kotlinlogging.KotlinLogging
 import net.chrissearle.api.ApiError
 import net.chrissearle.api.LocationNotFound
+import net.chrissearle.spoolman.model.Spool
+import net.chrissearle.spoolman.model.SpoolLabel
+import net.chrissearle.spoolman.model.StockSummary
+import net.chrissearle.spoolman.scan.ScanID
+import net.chrissearle.spoolman.scan.ScanLocation
 
 private val logger = KotlinLogging.logger {}
 
