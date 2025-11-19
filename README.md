@@ -18,6 +18,39 @@ Expects two extra fields:
 
 It does expect a filament color value to be defined.
 
+## Environment variables
+
+```shell
+SPOOLMAN_API_PREFIX=https://HOSTNMAME/api/v1
+SPOOLMAN_SPOOL_PREFIX=https://HOSTNMAME/stock/scan/spool/
+SPOOLMAN_LOCATION_PREFIX=https://HOSTNMAME/stock/scan/location/
+```
+
+* `SPOOLMAN_API_PREFIX` - the root of the Spoolman API
+* `SPOOLMAN_SPOOL_PREFIX` - the prefix for scanning a spool - will get the spool ID appended
+* `SPOOLMAN_LOCATION_PREFIX` - the prefix for scanning a location - will get the location name appended
+
+## Usage
+
+* HTML page to show what should be reordered: `https://HOSTNAME/stock/`
+
+* Location scan page: `https://HOSTNAME/stock/scan/location/LOCATION_NAME`
+* Spool scan page: `https://HOSTNAME/stock/scan/spool/SPOOL_ID`
+* Clear scan page: `https://HOSTNAME/stock/scan/clear`
+
+* Location api page: `https://HOSTNAME/stock/api/locations`
+* Spool api page: `https://HOSTNAME/stock/api/spools`
+
 ## Scanning
 
-Links are provided to allow for scan of QR of spool or location to make moving stock easier.
+Generate QR codes for each location and spool using the API pages.
+
+Scanning a location or a spool QR code will register that into the session.
+
+If both a location and a spool are registered in the session, the spool will be moved to that location.
+
+Sessions live for 5 minutes - or you can call the clear scan page to empty the session.
+
+So - you can scan a location and then a series of spools to move them all to that location.
+
+Or you can scan a spool first then a location to move that spool.
