@@ -17,3 +17,7 @@ Expects two extra fields:
 * stock: Int - how many to have on hand
 
 It does expect a filament color value to be defined.
+
+## Scanning
+
+Links are provided to allow for scan of QR of spool or location to make moving stock easier.

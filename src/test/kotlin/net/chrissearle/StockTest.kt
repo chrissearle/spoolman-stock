@@ -15,8 +15,11 @@ import io.ktor.http.headersOf
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import io.ktor.utils.io.ByteReadChannel
+import net.chrissearle.spoolman.ApiConfig
+import net.chrissearle.spoolman.SpoolmanApi
 import net.chrissearle.spoolman.StockSummary
 import net.chrissearle.spoolman.configureSpoolmanRouting
+import net.chrissearle.spoolman.spoolmanApi
 import net.chrissearle.spoolman.spoolmanService
 
 class StockTest :
@@ -33,12 +36,12 @@ class StockTest :
                 }
 
             testApplication {
-                buildTestApplication(engine)
+                val api = buildApi(engine)
 
-                val service = buildService(engine)
+                buildTestApplication(api)
 
                 either {
-                    val filaments = service.fetchFilaments()
+                    val filaments = api.fetchFilaments()
 
                     filaments.size shouldBe 67
                 }
@@ -56,12 +59,12 @@ class StockTest :
                 }
 
             testApplication {
-                buildTestApplication(engine)
+                val api = buildApi(engine)
 
-                val service = buildService(engine)
+                buildTestApplication(api)
 
                 either {
-                    val spools = service.fetchFilaments()
+                    val spools = api.fetchFilaments()
 
                     spools.size shouldBe 78
                 }
@@ -71,7 +74,7 @@ class StockTest :
         test("Stock Fetching") {
             val engine =
                 MockEngine { request ->
-                    if (request.url.encodedPath == "/filaments") {
+                    if (request.url.encodedPath.contains("filaments")) {
                         respond(
                             content = ByteReadChannel(loadFixture("/filaments_export.json")),
                             status = HttpStatusCode.OK,
@@ -87,7 +90,9 @@ class StockTest :
                 }
 
             testApplication {
-                buildTestApplication(engine)
+                val api = buildApi(engine)
+
+                buildTestApplication(api)
 
                 val client = buildTestClient()
 
@@ -105,18 +110,23 @@ class StockTest :
         }
     })
 
-private fun buildService(engine: MockEngine) =
-    spoolmanService(
-        spools = "/spools",
-        filaments = "/filaments",
-        client = buildClient(engine),
-        viewPrefix = ""
+private fun buildApi(engine: MockEngine) =
+    spoolmanApi(
+        httpClient = buildClient(engine),
+        apiConfig = ApiConfig("/"),
     )
 
-private fun ApplicationTestBuilder.buildTestApplication(engine: MockEngine) {
+private fun buildService(api: SpoolmanApi) =
+    spoolmanService(
+        spoolmanApi = api,
+        spoolPrefix = "",
+        locationPrefix = "",
+    )
+
+private fun ApplicationTestBuilder.buildTestApplication(api: SpoolmanApi) {
     serializedTestApplication {
         configureSpoolmanRouting(
-            buildService(engine)
+            buildService(api)
         )
     }
 }

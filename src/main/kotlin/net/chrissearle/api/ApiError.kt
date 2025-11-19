@@ -42,3 +42,28 @@ data class SpoolmanCallFailed(
         upstream = upstream,
         systemName = "Spoolman",
     )
+
+abstract class RequiredField(
+    val fieldName: String,
+) : ApiError(
+        ErrorResponse(
+            status = HttpStatusCode.BadRequest,
+            message = "$fieldName required"
+        )
+    )
+
+data object IdRequired : RequiredField(fieldName = "id")
+
+data object LocationRequired : RequiredField(fieldName = "location")
+
+data class IdNotNumeric(
+    val id: String?
+) : ApiError(ErrorResponse(status = HttpStatusCode.BadRequest, message = "ID was not numeric: $id"))
+
+data class SpoolNotFound(
+    val id: Int
+) : ApiError(ErrorResponse(status = HttpStatusCode.NotFound, message = "Spool not found: $id"))
+
+data class LocationNotFound(
+    val location: String
+) : ApiError(ErrorResponse(status = HttpStatusCode.NotFound, message = "Location not found: $location"))

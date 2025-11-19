@@ -36,6 +36,7 @@ ktor-server-metrics-micrometer = { group = "io.ktor", name = "ktor-server-metric
 ktor-server-cio = { group = "io.ktor", name = "ktor-server-cio-jvm", version.ref = "ktor" }
 ktor-server-status-pages = { group = "io.ktor", name = "ktor-server-status-pages-jvm", version.ref = "ktor" }
 ktor-server-html-builder = { group = "io.ktor", name = "ktor-server-html-builder", version.ref = "ktor" }
+ktor-server-sessions = { module = "io.ktor:ktor-server-sessions", version.ref = "ktor" }
 
 ktor-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
@@ -55,7 +56,7 @@ ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 [bundles]
-ktor-server = ["ktor-server-call-id", "ktor-server-call-logging", "ktor-server-content-negotiation", "ktor-server-core", "ktor-server-metrics-micrometer", "ktor-server-cio", "ktor-server-status-pages", "ktor-server-html-builder"]
+ktor-server = ["ktor-server-call-id", "ktor-server-call-logging", "ktor-server-content-negotiation", "ktor-server-core", "ktor-server-metrics-micrometer", "ktor-server-cio", "ktor-server-status-pages", "ktor-server-html-builder", "ktor-server-sessions"]
 ktor-client = ["ktor-client-content-negotiation", "ktor-client-core", "ktor-client-logging", "ktor-client-cio"]
 serialization = ["ktor-serialization", "kotlinx-serialization", "kotlinx-datetime", "kotlinx-serialization-csv"]
 monitoring = ["kotlin-logging", "micrometer-registry-prometheus", "cohort"]

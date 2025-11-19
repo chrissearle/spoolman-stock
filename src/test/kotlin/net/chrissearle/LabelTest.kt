@@ -14,13 +14,14 @@ import io.ktor.http.headersOf
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import io.ktor.utils.io.ByteReadChannel
+import net.chrissearle.spoolman.ApiConfig
 import net.chrissearle.spoolman.SpoolLabel
+import net.chrissearle.spoolman.SpoolmanApi
 import net.chrissearle.spoolman.configureSpoolmanRouting
 import net.chrissearle.spoolman.spoolmanService
 
 class LabelTest :
     FunSpec({
-
         test("Label Fetching") {
             val engine =
                 MockEngine {
@@ -48,14 +49,45 @@ class LabelTest :
                     }
             }
         }
+
+        test("Location Fetching") {
+            val engine =
+                MockEngine {
+                    respond(
+                        content = ByteReadChannel(loadFixture("/locations.json")),
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json")
+                    )
+                }
+
+            testApplication {
+                buildTestApplication(engine)
+
+                val client = buildTestClient()
+
+                client
+                    .get("/stock/api/locations") {
+                        accept(ContentType.Application.Json)
+                    }.apply {
+                        status shouldBe HttpStatusCode.OK
+
+                        val response = body<List<String>>()
+
+                        response.size shouldBe 15
+                    }
+            }
+        }
     })
 
 private fun buildService(engine: MockEngine) =
     spoolmanService(
-        spools = "/spools",
-        filaments = "/filaments",
-        client = buildClient(engine),
-        viewPrefix = ""
+        spoolmanApi =
+            SpoolmanApi(
+                httpClient = buildClient(engine),
+                apiConfig = ApiConfig("/")
+            ),
+        spoolPrefix = "",
+        locationPrefix = "",
     )
 
 private fun ApplicationTestBuilder.buildTestApplication(engine: MockEngine) {

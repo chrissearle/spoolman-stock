@@ -19,3 +19,12 @@ fun String?.normalizeShopUrl(): String? {
 
     return result
 }
+
+data class ApiConfig(
+    val apiPrefix: String
+) {
+    val exportSpools = "$apiPrefix/export/spools?fmt=json"
+    val exportFilaments = "$apiPrefix/export/filaments?fmt=json"
+    val spoolPrefix = "$apiPrefix/spool/"
+    val locations = "$apiPrefix/location"
+}
