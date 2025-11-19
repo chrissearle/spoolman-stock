@@ -8,6 +8,7 @@ import net.chrissearle.spoolman.spoolmanApi
 import net.chrissearle.spoolman.spoolmanService
 
 fun Application.confStr(path: String) = environment.config.property(path).getString()
+
 fun Application.confList(path: String) = environment.config.property(path).getList()
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
