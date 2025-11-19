@@ -87,7 +87,8 @@ private fun buildService(engine: MockEngine) =
                 apiConfig = ApiConfig("/")
             ),
         spoolPrefix = "",
-        locationPrefix = "",,
+        locationPrefix = "",
+        startLocations = emptyList()
     )
 
 private fun ApplicationTestBuilder.buildTestApplication(engine: MockEngine) {

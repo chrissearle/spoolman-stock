@@ -120,7 +120,8 @@ private fun buildService(api: SpoolmanApi) =
     spoolmanService(
         spoolmanApi = api,
         spoolPrefix = "",
-        locationPrefix = "",,
+        locationPrefix = "",
+        startLocations = emptyList(),
     )
 
 private fun ApplicationTestBuilder.buildTestApplication(api: SpoolmanApi) {
