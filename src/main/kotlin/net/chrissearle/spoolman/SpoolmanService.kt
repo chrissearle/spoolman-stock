@@ -7,6 +7,8 @@ import net.chrissearle.api.ApiError
 import net.chrissearle.api.LocationNotFound
 import net.chrissearle.spoolman.model.Spool
 import net.chrissearle.spoolman.model.SpoolLabel
+import net.chrissearle.spoolman.model.SpoolWithFirstUsed
+import net.chrissearle.spoolman.model.SpoolWithLocation
 import net.chrissearle.spoolman.model.StockSummary
 import net.chrissearle.spoolman.scan.ScanID
 import net.chrissearle.spoolman.scan.ScanLocation
@@ -17,6 +19,7 @@ class SpoolmanService(
     val spoolmanApi: SpoolmanApi,
     val spoolPrefix: String,
     val locationPrefix: String,
+    val startLocations: List<String>,
 ) {
     context(raise: Raise<ApiError>)
     suspend fun stockSummaries(): List<StockSummary> {
@@ -88,7 +91,21 @@ class SpoolmanService(
     suspend fun updateSpoolLocation(
         spool: ScanID,
         location: ScanLocation
-    ) = spoolmanApi.updateLocation(spool.id, location.location)
+    ): SpoolWithLocation {
+        val updateLocation = spoolmanApi.updateLocation(spool.id, location.location)
+
+        if (startLocations.contains(updateLocation.location) && updateLocation.firstUsed.isNullOrBlank()) {
+            updateSpoolFirstUsed(updateLocation.id)
+        }
+
+        return SpoolWithLocation(
+            id = updateLocation.id,
+            location = updateLocation.location
+        )
+    }
+
+    context(raise: Raise<ApiError>)
+    suspend fun updateSpoolFirstUsed(spool: Int): SpoolWithFirstUsed = spoolmanApi.updateFirstUsed(spool)
 }
 
 private fun String.color() = "#${this.uppercase()}"
@@ -107,8 +124,10 @@ fun spoolmanService(
     spoolmanApi: SpoolmanApi,
     spoolPrefix: String,
     locationPrefix: String,
+    startLocations: List<String>,
 ) = SpoolmanService(
     spoolmanApi = spoolmanApi,
     spoolPrefix = spoolPrefix,
-    locationPrefix = locationPrefix
+    locationPrefix = locationPrefix,
+    startLocations = startLocations
 )

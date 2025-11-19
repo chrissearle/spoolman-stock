@@ -20,7 +20,11 @@ import net.chrissearle.api.SpoolNotFound
 import net.chrissearle.api.SpoolmanCallFailed
 import net.chrissearle.spoolman.model.Filament
 import net.chrissearle.spoolman.model.Spool
+import net.chrissearle.spoolman.model.SpoolWithFirstUsed
 import net.chrissearle.spoolman.model.SpoolWithLocation
+import net.chrissearle.spoolman.model.SpoolWithLocationAndFirstUsed
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 private val logger = KotlinLogging.logger {}
 
@@ -95,7 +99,28 @@ class SpoolmanApi(
             }
             setBody(SpoolWithLocation(spoolId, location))
         }.valid(SpoolNotFound(spoolId))
-        .body<SpoolWithLocation>()
+        .body<SpoolWithLocationAndFirstUsed>()
+
+    context(raise: Raise<ApiError>)
+    suspend fun updateFirstUsed(spoolId: Int) =
+        httpClient
+            .request(apiConfig.spoolPrefix + "$spoolId") {
+                method = HttpMethod.Patch
+                headers {
+                    append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    append(HttpHeaders.Accept, ContentType.Application.Json.toString())
+                }
+                setBody(
+                    SpoolWithFirstUsed(
+                        spoolId,
+                        Instant
+                            .now()
+                            .truncatedTo(ChronoUnit.SECONDS)
+                            .toString()
+                    )
+                )
+            }.valid(SpoolNotFound(spoolId))
+            .body<SpoolWithFirstUsed>()
 }
 
 fun spoolmanApi(
