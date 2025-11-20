@@ -32,6 +32,7 @@ fun Application.module() {
             spoolmanApi = spoolmanApi,
             spoolPrefix = confStr("spoolman.spoolPrefix"),
             locationPrefix = confStr("spoolman.locationPrefix"),
+            clearUrl = confStr("spoolman.clearUrl"),
             startLocations = confList("spoolman.startLocations")
         )
     )

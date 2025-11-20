@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.bundles.serialization)
     implementation(libs.bundles.monitoring)
     implementation(libs.arrow.core)
+    implementation(libs.qrcode.kotlin)
     runtimeOnly(libs.logback.classic)
 
     testImplementation(libs.bundles.test)

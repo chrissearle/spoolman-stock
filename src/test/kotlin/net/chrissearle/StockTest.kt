@@ -121,6 +121,7 @@ private fun buildService(api: SpoolmanApi) =
         spoolmanApi = api,
         spoolPrefix = "",
         locationPrefix = "",
+        clearUrl = "",
         startLocations = emptyList(),
     )
 

@@ -5,6 +5,7 @@ import arrow.core.raise.context.ensure
 import io.github.oshai.kotlinlogging.KotlinLogging
 import net.chrissearle.api.ApiError
 import net.chrissearle.api.LocationNotFound
+import net.chrissearle.spoolman.model.LocationLabel
 import net.chrissearle.spoolman.model.Spool
 import net.chrissearle.spoolman.model.SpoolLabel
 import net.chrissearle.spoolman.model.SpoolWithFirstUsed
@@ -20,6 +21,7 @@ class SpoolmanService(
     val spoolPrefix: String,
     val locationPrefix: String,
     val startLocations: List<String>,
+    val clearUrl: String,
 ) {
     context(raise: Raise<ApiError>)
     suspend fun stockSummaries(): List<StockSummary> {
@@ -54,15 +56,31 @@ class SpoolmanService(
             .also { logger.info { "Successfully fetched ${it.count()} stock filaments." } }
 
     context(raise: Raise<ApiError>)
-    suspend fun spoolLabels() =
-        unarchivedSpools()
-            .map { it.toLabel(spoolPrefix) }
+    suspend fun spoolLabels() = unarchivedSpools().map { it.toLabel(spoolPrefix) }
 
     context(raise: Raise<ApiError>)
-    suspend fun locationLabels() =
+    suspend fun locationLabels(includeClear: Boolean = false) =
         spoolmanApi
             .fetchLocations()
-            .map { "$locationPrefix$it" }
+            .map { LocationLabel(it, "$locationPrefix$it") }
+            .let { labels -> if (includeClear) labels + LocationLabel("clear", clearUrl) else labels }
+            .let {
+                if (it.none { label -> label.location == "Ext" }) {
+                    it + LocationLabel("Ext", "$locationPrefix/Ext")
+                } else {
+                    it
+                }
+            }
+
+    context(raise: Raise<ApiError>)
+    suspend fun locationLabel(location: ScanLocation) =
+        getLocation(location).let {
+            if (it.location == "clear") {
+                LocationLabel(it.location, clearUrl)
+            } else {
+                LocationLabel(it.location, "$locationPrefix${it.location}")
+            }
+        }
 
     context(raise: Raise<ApiError>)
     private suspend fun unarchivedSpools() =
@@ -80,6 +98,14 @@ class SpoolmanService(
 
     context(raise: Raise<ApiError>)
     suspend fun getLocation(location: ScanLocation): ScanLocation {
+        if (location.location == "clear") {
+            return location
+        }
+
+        if (location.location == "Ext") {
+            return location
+        }
+
         val locations = spoolmanApi.fetchLocations()
 
         ensure(locations.contains(location.location)) { LocationNotFound(location.location) }
@@ -125,9 +151,11 @@ fun spoolmanService(
     spoolPrefix: String,
     locationPrefix: String,
     startLocations: List<String>,
+    clearUrl: String,
 ) = SpoolmanService(
     spoolmanApi = spoolmanApi,
     spoolPrefix = spoolPrefix,
     locationPrefix = locationPrefix,
+    clearUrl = clearUrl,
     startLocations = startLocations
 )

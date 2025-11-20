@@ -4,17 +4,18 @@ cohort = "2.8.0"
 dependency_analysis = "3.4.1"
 detekt = "1.23.8"
 gradle_versions_filter = "0.1.16"
-kotest = "6.0.4"
+kotest = "6.0.5"
 kotlin_logging = "7.0.13"
 kotlin = "2.2.21"
-kotlinter = "5.2.0"
+kotlinter = "5.3.0"
 kotlinx_datetime = "0.7.1"
 kotlinx_serialization = "1.9.0"
 kotlinx_serialization_csv = "3.2.0"
 ktor = "3.3.2"
-logback = "1.5.20"
+logback = "1.5.21"
 mockk = "1.14.6"
-prometheus = "1.15.5"
+prometheus = "1.16.0"
+qrcode = "4.5.0"
 
 [libraries]
 arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
@@ -47,6 +48,8 @@ kotlinx-serialization-csv = { group = "de.brudaswen.kotlinx.serialization", name
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 
 micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "prometheus" }
+
+qrcode-kotlin = { group = "io.github.g0dkar", name = "qrcode-kotlin", version.ref = "qrcode" }
 
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

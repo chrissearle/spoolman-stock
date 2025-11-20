@@ -17,6 +17,7 @@ import io.ktor.utils.io.ByteReadChannel
 import net.chrissearle.spoolman.ApiConfig
 import net.chrissearle.spoolman.SpoolmanApi
 import net.chrissearle.spoolman.configureSpoolmanRouting
+import net.chrissearle.spoolman.model.LocationLabel
 import net.chrissearle.spoolman.model.SpoolLabel
 import net.chrissearle.spoolman.spoolmanService
 
@@ -71,7 +72,7 @@ class LabelTest :
                     }.apply {
                         status shouldBe HttpStatusCode.OK
 
-                        val response = body<List<String>>()
+                        val response = body<List<LocationLabel>>()
 
                         response.size shouldBe 15
                     }
@@ -88,7 +89,8 @@ private fun buildService(engine: MockEngine) =
             ),
         spoolPrefix = "",
         locationPrefix = "",
-        startLocations = emptyList()
+        clearUrl = "",
+        startLocations = emptyList(),
     )
 
 private fun ApplicationTestBuilder.buildTestApplication(engine: MockEngine) {
