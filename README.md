@@ -21,20 +21,17 @@ It does expect a filament color value to be defined.
 ## Environment variables
 
 ```shell
-SPOOLMAN_API_PREFIX=https://HOSTNMAME/api/v1
-SPOOLMAN_SPOOL_PREFIX=https://HOSTNMAME/stock/scan/spool/
-SPOOLMAN_LOCATION_PREFIX=https://HOSTNMAME/stock/scan/location/
-SPOOLMAN_CLEAR_URL=https://HOSTNMAME/stock/scan/clear
+SPOOLMAN_API_HOST=https://public-or-private-hostname.of.spoolman
+SPOOLMAN_SCAN_HOST=https://public-hostname.of.spoolman
 ```
 
-* `SPOOLMAN_API_PREFIX` - the root of the Spoolman API
-* `SPOOLMAN_SPOOL_PREFIX` - the prefix for scanning a spool - will get the spool ID appended
-* `SPOOLMAN_LOCATION_PREFIX` - the prefix for scanning a location - will get the location name appended
-* `SPOOLMAN_CLEAR_URL` - the URL to clear the scan session
+* `SPOOLMAN_API_HOST` - the host where the app can reach the Spoolman API
+* `SPOOLMAN_SCAN_HOST` - the host where the user can reach Spoolman
 
 ## Usage
 
 * HTML page to show what should be reordered: `https://HOSTNAME/stock/`
+* HTML page to show location QR codes: `https://HOSTNAME/stock/qr/locations`
 
 * Location scan page: `https://HOSTNAME/stock/scan/location/LOCATION_NAME`
 * Spool scan page: `https://HOSTNAME/stock/scan/spool/SPOOL_ID`

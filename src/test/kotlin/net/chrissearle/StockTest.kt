@@ -16,6 +16,7 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import io.ktor.utils.io.ByteReadChannel
 import net.chrissearle.spoolman.ApiConfig
+import net.chrissearle.spoolman.ScanConfig
 import net.chrissearle.spoolman.SpoolmanApi
 import net.chrissearle.spoolman.configureSpoolmanRouting
 import net.chrissearle.spoolman.model.StockSummary
@@ -119,9 +120,7 @@ private fun buildApi(engine: MockEngine) =
 private fun buildService(api: SpoolmanApi) =
     spoolmanService(
         spoolmanApi = api,
-        spoolPrefix = "",
-        locationPrefix = "",
-        clearUrl = "",
+        scanConfig = ScanConfig(scanHost = ""),
         startLocations = emptyList(),
     )
 

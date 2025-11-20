@@ -15,6 +15,7 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import io.ktor.utils.io.ByteReadChannel
 import net.chrissearle.spoolman.ApiConfig
+import net.chrissearle.spoolman.ScanConfig
 import net.chrissearle.spoolman.SpoolmanApi
 import net.chrissearle.spoolman.configureSpoolmanRouting
 import net.chrissearle.spoolman.model.LocationLabel
@@ -74,7 +75,35 @@ class LabelTest :
 
                         val response = body<List<LocationLabel>>()
 
-                        response.size shouldBe 15
+                        response.size shouldBe 16
+                    }
+            }
+        }
+
+        test("Location Fetching With Ext") {
+            val engine =
+                MockEngine {
+                    respond(
+                        content = ByteReadChannel(loadFixture("/locations_with_ext.json")),
+                        status = HttpStatusCode.OK,
+                        headers = headersOf(HttpHeaders.ContentType, "application/json")
+                    )
+                }
+
+            testApplication {
+                buildTestApplication(engine)
+
+                val client = buildTestClient()
+
+                client
+                    .get("/stock/api/locations") {
+                        accept(ContentType.Application.Json)
+                    }.apply {
+                        status shouldBe HttpStatusCode.OK
+
+                        val response = body<List<LocationLabel>>()
+
+                        response.size shouldBe 16
                     }
             }
         }
@@ -87,9 +116,7 @@ private fun buildService(engine: MockEngine) =
                 httpClient = buildClient(engine),
                 apiConfig = ApiConfig("/")
             ),
-        spoolPrefix = "",
-        locationPrefix = "",
-        clearUrl = "",
+        scanConfig = ScanConfig(scanHost = ""),
         startLocations = emptyList(),
     )
 

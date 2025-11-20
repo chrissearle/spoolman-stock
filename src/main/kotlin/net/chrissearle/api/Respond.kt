@@ -28,7 +28,11 @@ suspend fun RoutingContext.respond(error: ApiError) =
 context(context: RoutingContext)
 suspend inline fun <reified A : Any> Either<ApiError, A>.respondHtml(noinline block: HTML.(A) -> Unit) {
     when (this) {
-        is Either.Left -> context.respond(this.value) // your existing error handler
+        is Either.Left -> {
+            context.respond(this.value)
+        }
+
+        // your existing error handler
         is Either.Right -> {
             val payload = this.value
 

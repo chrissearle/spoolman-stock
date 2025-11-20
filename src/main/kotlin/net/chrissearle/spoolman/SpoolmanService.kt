@@ -18,10 +18,8 @@ private val logger = KotlinLogging.logger {}
 
 class SpoolmanService(
     val spoolmanApi: SpoolmanApi,
-    val spoolPrefix: String,
-    val locationPrefix: String,
+    val scanConfig: ScanConfig,
     val startLocations: List<String>,
-    val clearUrl: String,
 ) {
     context(raise: Raise<ApiError>)
     suspend fun stockSummaries(): List<StockSummary> {
@@ -56,17 +54,17 @@ class SpoolmanService(
             .also { logger.info { "Successfully fetched ${it.count()} stock filaments." } }
 
     context(raise: Raise<ApiError>)
-    suspend fun spoolLabels() = unarchivedSpools().map { it.toLabel(spoolPrefix) }
+    suspend fun spoolLabels() = unarchivedSpools().map { it.toLabel(scanConfig.spoolPrefix) }
 
     context(raise: Raise<ApiError>)
     suspend fun locationLabels(includeClear: Boolean = false) =
         spoolmanApi
             .fetchLocations()
-            .map { LocationLabel(it, "$locationPrefix$it") }
-            .let { labels -> if (includeClear) labels + LocationLabel("clear", clearUrl) else labels }
+            .map { LocationLabel(it, "${scanConfig.locationPrefix}$it") }
+            .let { labels -> if (includeClear) labels + LocationLabel("clear", scanConfig.clearUrl) else labels }
             .let {
                 if (it.none { label -> label.location == "Ext" }) {
-                    it + LocationLabel("Ext", "$locationPrefix/Ext")
+                    it + LocationLabel("Ext", "${scanConfig.locationPrefix}/Ext")
                 } else {
                     it
                 }
@@ -76,9 +74,9 @@ class SpoolmanService(
     suspend fun locationLabel(location: ScanLocation) =
         getLocation(location).let {
             if (it.location == "clear") {
-                LocationLabel(it.location, clearUrl)
+                LocationLabel(it.location, scanConfig.clearUrl)
             } else {
-                LocationLabel(it.location, "$locationPrefix${it.location}")
+                LocationLabel(it.location, "${scanConfig.locationPrefix}${it.location}")
             }
         }
 
@@ -98,11 +96,7 @@ class SpoolmanService(
 
     context(raise: Raise<ApiError>)
     suspend fun getLocation(location: ScanLocation): ScanLocation {
-        if (location.location == "clear") {
-            return location
-        }
-
-        if (location.location == "Ext") {
+        if (location.location == "clear" || location.location == "Ext") {
             return location
         }
 
@@ -148,14 +142,10 @@ private fun Spool.toLabel(spoolPrefix: String) =
 
 fun spoolmanService(
     spoolmanApi: SpoolmanApi,
-    spoolPrefix: String,
-    locationPrefix: String,
+    scanConfig: ScanConfig,
     startLocations: List<String>,
-    clearUrl: String,
 ) = SpoolmanService(
     spoolmanApi = spoolmanApi,
-    spoolPrefix = spoolPrefix,
-    locationPrefix = locationPrefix,
-    clearUrl = clearUrl,
+    scanConfig = scanConfig,
     startLocations = startLocations
 )
