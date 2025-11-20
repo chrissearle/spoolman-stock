@@ -24,11 +24,13 @@ It does expect a filament color value to be defined.
 SPOOLMAN_API_PREFIX=https://HOSTNMAME/api/v1
 SPOOLMAN_SPOOL_PREFIX=https://HOSTNMAME/stock/scan/spool/
 SPOOLMAN_LOCATION_PREFIX=https://HOSTNMAME/stock/scan/location/
+SPOOLMAN_CLEAR_URL=https://HOSTNMAME/stock/scan/clear
 ```
 
 * `SPOOLMAN_API_PREFIX` - the root of the Spoolman API
 * `SPOOLMAN_SPOOL_PREFIX` - the prefix for scanning a spool - will get the spool ID appended
 * `SPOOLMAN_LOCATION_PREFIX` - the prefix for scanning a location - will get the location name appended
+* `SPOOLMAN_CLEAR_URL` - the URL to clear the scan session
 
 ## Usage
 
