@@ -53,3 +53,6 @@ Sessions live for 5 minutes - or you can call the clear scan page to empty the s
 So - you can scan a location and then a series of spools to move them all to that location.
 
 Or you can scan a spool first then a location to move that spool.
+
+There is a locations QR page you can print out if you want one to have next to your storage area or you can print labels
+for each location (or both).
