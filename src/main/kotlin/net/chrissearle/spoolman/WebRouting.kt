@@ -8,22 +8,29 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import kotlinx.html.BODY
+import kotlinx.html.ButtonType
 import kotlinx.html.DIV
 import kotlinx.html.HTML
 import kotlinx.html.a
 import kotlinx.html.body
+import kotlinx.html.button
 import kotlinx.html.classes
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.h5
 import kotlinx.html.h6
 import kotlinx.html.head
+import kotlinx.html.id
 import kotlinx.html.img
+import kotlinx.html.li
 import kotlinx.html.link
+import kotlinx.html.nav
 import kotlinx.html.p
 import kotlinx.html.script
+import kotlinx.html.span
 import kotlinx.html.style
 import kotlinx.html.title
+import kotlinx.html.ul
 import net.chrissearle.api.respondBytes
 import net.chrissearle.api.respondHtml
 import net.chrissearle.logCall
@@ -88,10 +95,23 @@ fun Route.webRouting(service: SpoolmanService) {
 
 private fun HTML.locationsBody(locations: List<LocationLabel>) {
     body {
+        navbar()
+
         div {
             classes = setOf("container", "mt-4", "mb-4")
 
-            h1 { +"Spoolman Locations" }
+            h1 { +"Locations" }
+
+            div {
+                classes =
+                    setOf(
+                        "mb-3",
+                        "fs-6",
+                        "text-body-secondary"
+                    )
+
+                spoolmanLinks()
+            }
 
             div {
                 classes =
@@ -116,10 +136,23 @@ private fun HTML.locationsBody(locations: List<LocationLabel>) {
 
 private fun HTML.stockBody(stock: List<StockSummary>) {
     body {
+        navbar()
+
         div {
             classes = setOf("container", "mt-4", "mb-4")
 
-            h1 { +"Spoolman Stock" }
+            h1 { +"Summary" }
+
+            div {
+                classes =
+                    setOf(
+                        "mb-3",
+                        "fs-6",
+                        "text-body-secondary"
+                    )
+
+                spoolmanLinks()
+            }
 
             div {
                 classes =
@@ -139,6 +172,36 @@ private fun HTML.stockBody(stock: List<StockSummary>) {
         }
 
         bootstrapScript()
+    }
+}
+
+private fun DIV.spoolmanLinks() {
+    div {
+        classes = setOf("list-group", "list-group-horizontal")
+
+        a {
+            classes = setOf("list-group-item", "list-group-item-action")
+            href = "/spools"
+            target = "_blank"
+
+            +"Spoolman Spools"
+        }
+
+        a {
+            classes = setOf("list-group-item", "list-group-item-action")
+            href = "/filaments"
+            target = "_blank"
+
+            +"Spoolman Filaments"
+        }
+
+        a {
+            classes = setOf("list-group-item", "list-group-item-action")
+            href = "/locations"
+            target = "_blank"
+
+            +"Spoolman Locations"
+        }
     }
 }
 
@@ -255,6 +318,80 @@ private fun DIV.locationItem(item: LocationLabel) {
                             classes = setOf("ms-3")
 
                             +item.link
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun BODY.navbar() {
+    nav {
+        classes = setOf("navbar", "navbar-expand-lg")
+
+        div {
+            classes = setOf("container-fluid")
+
+            a {
+                classes = setOf("navbar-brand")
+                href = "/stock"
+
+                +"Spoolman Stock"
+            }
+
+            button {
+                classes = setOf("navbar-toggler")
+                type = ButtonType.button
+                attributes["data-bs-toggle"] = "collapse"
+                attributes["data-bs-target"] = "#navbarNav"
+                attributes["aria-controls"] = "navbarNav"
+                attributes["aria-expanded"] = "false"
+                attributes["aria-label"] = "Toggle navigation"
+
+                span {
+                    classes = setOf("navbar-toggler-icon")
+                }
+            }
+
+            div {
+                classes = setOf("collapse", "navbar-collapse")
+                id = "navbarNav"
+
+                ul {
+                    classes = setOf("navbar-nav")
+
+                    li {
+                        classes = setOf("nav-item")
+
+                        a {
+                            classes = setOf("nav-link")
+                            href = "/"
+                            target = "_blank"
+
+                            +"Spoolman"
+                        }
+                    }
+
+                    li {
+                        classes = setOf("nav-item")
+
+                        a {
+                            classes = setOf("nav-link")
+                            href = "/stock"
+
+                            +"Stock Summary"
+                        }
+                    }
+
+                    li {
+                        classes = setOf("nav-item")
+
+                        a {
+                            classes = setOf("nav-link")
+                            href = "/stock/qr/locations"
+
+                            +"Locations QR Codes"
                         }
                     }
                 }
