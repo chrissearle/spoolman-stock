@@ -8,6 +8,7 @@ import net.chrissearle.api.LocationNotFound
 import net.chrissearle.spoolman.model.LocationLabel
 import net.chrissearle.spoolman.model.Spool
 import net.chrissearle.spoolman.model.SpoolLabel
+import net.chrissearle.spoolman.model.SpoolWeightUsed
 import net.chrissearle.spoolman.model.SpoolWithFirstUsed
 import net.chrissearle.spoolman.model.SpoolWithLocation
 import net.chrissearle.spoolman.model.StockSummary
@@ -16,6 +17,7 @@ import net.chrissearle.spoolman.scan.ScanLocation
 
 private val logger = KotlinLogging.logger {}
 
+@Suppress("TooManyFunctions")
 class SpoolmanService(
     val spoolmanApi: SpoolmanApi,
     val scanConfig: ScanConfig,
@@ -81,7 +83,7 @@ class SpoolmanService(
         }
 
     context(raise: Raise<ApiError>)
-    private suspend fun unarchivedSpools() =
+    suspend fun unarchivedSpools() =
         spoolmanApi
             .fetchSpools()
             .filter { !it.archived }
@@ -126,6 +128,11 @@ class SpoolmanService(
 
     context(raise: Raise<ApiError>)
     suspend fun updateSpoolFirstUsed(spool: Int): SpoolWithFirstUsed = spoolmanApi.updateFirstUsed(spool)
+
+    context(raise: Raise<ApiError>)
+    suspend fun useSpoolWeight(spoolWeightUsed: SpoolWeightUsed) {
+        spoolmanApi.useFilament(spoolWeightUsed.id, spoolWeightUsed.weight)
+    }
 }
 
 private fun String.color() = "#${this.uppercase()}"

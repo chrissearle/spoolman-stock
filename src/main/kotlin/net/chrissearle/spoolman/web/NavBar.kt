@@ -2,6 +2,7 @@ package net.chrissearle.spoolman.web
 
 import kotlinx.html.BODY
 import kotlinx.html.ButtonType
+import kotlinx.html.UL
 import kotlinx.html.a
 import kotlinx.html.button
 import kotlinx.html.classes
@@ -47,41 +48,29 @@ fun BODY.navbar() {
                 ul {
                     classes = setOf("navbar-nav")
 
-                    li {
-                        classes = setOf("nav-item")
-
-                        a {
-                            classes = setOf("nav-link")
-                            href = "/"
-                            target = "_blank"
-
-                            +"Spoolman"
-                        }
-                    }
-
-                    li {
-                        classes = setOf("nav-item")
-
-                        a {
-                            classes = setOf("nav-link")
-                            href = "/stock"
-
-                            +"Stock Summary"
-                        }
-                    }
-
-                    li {
-                        classes = setOf("nav-item")
-
-                        a {
-                            classes = setOf("nav-link")
-                            href = "/stock/qr/locations"
-
-                            +"Locations QR Codes"
-                        }
-                    }
+                    navbarLink("/", "Spoolman")
+                    navbarLink("/stock", "Stock Summary")
+                    navbarLink("/stock/qr/locations", "Locations QR Codes")
+                    navbarLink("/stock/spools", "Spools")
                 }
             }
+        }
+    }
+}
+
+private fun UL.navbarLink(
+    link: String,
+    text: String
+) {
+    li {
+        classes = setOf("nav-item")
+
+        a {
+            classes = setOf("nav-link")
+            href = link
+            target = "_blank"
+
+            +text
         }
     }
 }

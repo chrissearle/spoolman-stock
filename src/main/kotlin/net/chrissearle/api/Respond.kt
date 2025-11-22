@@ -9,6 +9,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.html.respondHtml
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
+import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.RoutingContext
 import kotlinx.html.HTML
 import net.chrissearle.logApiError
@@ -66,6 +67,22 @@ suspend fun Either<ApiError, ByteArray>.respondBytes(
                 contentType = contentType,
                 status = status
             )
+        }
+    }
+}
+
+context(context: RoutingContext)
+suspend fun <A> Either<ApiError, A>.redirect(
+    url: String,
+    permanent: Boolean = false,
+) {
+    when (this) {
+        is Either.Left -> {
+            context.respond(this.value)
+        }
+
+        is Either.Right -> {
+            context.call.respondRedirect(url, permanent)
         }
     }
 }

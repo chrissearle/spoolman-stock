@@ -3,8 +3,8 @@ package net.chrissearle.spoolman.scan
 import arrow.core.raise.either
 import arrow.core.raise.ensure
 import kotlinx.serialization.Serializable
-import net.chrissearle.api.IdNotNumeric
 import net.chrissearle.api.IdRequired
+import net.chrissearle.api.NotNumeric
 
 @Serializable
 data class ScanID(
@@ -14,7 +14,7 @@ data class ScanID(
         operator fun invoke(id: String?) =
             either {
                 ensure(!id.isNullOrBlank()) { IdRequired }
-                ensure(id.toIntOrNull() != null) { IdNotNumeric(id) }
+                ensure(id.toIntOrNull() != null) { NotNumeric("id", id) }
                 ScanID(id.toInt())
             }
     }

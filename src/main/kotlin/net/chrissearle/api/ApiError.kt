@@ -56,9 +56,12 @@ data object IdRequired : RequiredField(fieldName = "id")
 
 data object LocationRequired : RequiredField(fieldName = "location")
 
-data class IdNotNumeric(
-    val id: String?
-) : ApiError(ErrorResponse(status = HttpStatusCode.BadRequest, message = "ID was not numeric: $id"))
+data object WeightRequired : RequiredField(fieldName = "weight")
+
+data class NotNumeric(
+    val field: String,
+    val value: String?
+) : ApiError(ErrorResponse(status = HttpStatusCode.BadRequest, message = "$field was not numeric: $value"))
 
 data class SpoolNotFound(
     val id: Int

@@ -23,6 +23,7 @@ import net.chrissearle.spoolman.model.Spool
 import net.chrissearle.spoolman.model.SpoolWithFirstUsed
 import net.chrissearle.spoolman.model.SpoolWithLocation
 import net.chrissearle.spoolman.model.SpoolWithLocationAndFirstUsed
+import net.chrissearle.spoolman.model.UseSpoolFilament
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -121,6 +122,21 @@ class SpoolmanApi(
                 )
             }.valid(SpoolNotFound(spoolId))
             .body<SpoolWithFirstUsed>()
+
+    context(raise: Raise<ApiError>)
+    suspend fun useFilament(
+        spoolId: Int,
+        weight: Int
+    ) = httpClient
+        .request(apiConfig.spoolPrefix + "$spoolId/use") {
+            method = HttpMethod.Put
+            headers {
+                append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                append(HttpHeaders.Accept, ContentType.Application.Json.toString())
+            }
+            setBody(UseSpoolFilament(weight))
+        }.valid(SpoolNotFound(spoolId))
+        .body<SpoolWithLocationAndFirstUsed>()
 }
 
 fun spoolmanApi(
