@@ -32,7 +32,6 @@ suspend inline fun <reified A : Any> Either<ApiError, A>.respondHtml(noinline bl
             context.respond(this.value)
         }
 
-        // your existing error handler
         is Either.Right -> {
             val payload = this.value
 
