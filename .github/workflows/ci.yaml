@@ -44,6 +44,11 @@ jobs:
             type=sha,format=short
             type=raw,value=latest,enable={{is_default_branch}}
 
+      - name: Generate build info resource
+        run: |
+          mkdir -p src/main/resources
+          echo "sha-${GITHUB_SHA::7}" > src/main/resources/image-tag.txt
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -65,20 +70,3 @@ jobs:
       - name: Generate summary
         run: |
           echo "Tag: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload reports if failed
-        if: failure()
-        uses: actions/upload-artifact@v5
-        with:
-          name: reports
-          path: |
-            **/build/reports/
-            **/build/test-results/
-
-      - name: Upload coverage if passed
-        if: success()
-        uses: actions/upload-artifact@v5
-        with:
-          name: coverage
-          path: |
-            **/build/reports/jacoco/

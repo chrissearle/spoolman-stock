@@ -10,6 +10,7 @@ import io.ktor.server.html.respondHtml
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
 import io.ktor.server.response.respondRedirect
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.RoutingContext
 import kotlinx.html.HTML
 import net.chrissearle.logApiError
@@ -86,3 +87,10 @@ suspend fun <A> Either<ApiError, A>.redirect(
         }
     }
 }
+
+context(context: RoutingContext)
+suspend inline fun Either<ApiError, String>.respondPlainText(status: HttpStatusCode = HttpStatusCode.OK) =
+    when (this) {
+        is Either.Left -> context.respond(value)
+        is Either.Right -> context.call.respondText(text = value, status = status)
+    }

@@ -36,3 +36,4 @@ out/
 .vscode/
 
 dev.env
+src/main/resources/image-tag.txt

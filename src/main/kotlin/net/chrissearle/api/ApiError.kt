@@ -70,3 +70,12 @@ data class SpoolNotFound(
 data class LocationNotFound(
     val location: String
 ) : ApiError(ErrorResponse(status = HttpStatusCode.NotFound, message = "Location not found: $location"))
+
+data class VersionNotReadable(
+    val e: Throwable
+) : ApiError(
+        ErrorResponse(
+            status = HttpStatusCode.InternalServerError,
+            message = "${e.message}"
+        )
+    )

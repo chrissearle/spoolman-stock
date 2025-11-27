@@ -1,5 +1,6 @@
 package net.chrissearle
 
+import arrow.core.raise.either
 import com.sksamuel.cohort.Cohort
 import com.sksamuel.cohort.HealthCheckRegistry
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -20,6 +21,8 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import kotlinx.coroutines.Dispatchers
+import net.chrissearle.api.BuildInfo
+import net.chrissearle.api.respondPlainText
 import org.slf4j.event.Level
 import kotlin.time.Duration.Companion.seconds
 
@@ -63,6 +66,14 @@ fun Application.configureMonitoring(upstreamHealthCheck: UpstreamHealthCheck) {
             logger.logCall(call)
 
             call.respond(appMicrometerRegistry.scrape())
+        }
+
+        get("/stock/version") {
+            logger.logCall(call)
+
+            either {
+                BuildInfo.imageTag()
+            }.respondPlainText()
         }
     }
 }
