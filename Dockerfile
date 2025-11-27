@@ -1,6 +1,12 @@
-FROM eclipse-temurin:22-jre
+FROM eclipse-temurin:22-jdk AS build
 
-RUN mkdir -p /opt/app
-COPY build/libs/stock.jar /opt/app
+WORKDIR /app
+COPY . .
 
-CMD ["java", "-jar", "/opt/app/stock.jar"]
+RUN ./gradlew clean build
+
+FROM eclipse-temurin:22-jre AS deploy
+
+COPY --from=build /app/build/libs/stock.jar /opt/app/stock.jar
+
+CMD ["java", "-javaagent:/opt/app/opentelemetry-javaagent.jar", "-jar", "/opt/app/stock.jar"]
