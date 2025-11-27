@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.7
+# syntax=docker/dockerfile:1.20
 
 FROM --platform=$BUILDPLATFORM eclipse-temurin:22-jdk AS build
 
