@@ -85,7 +85,7 @@ jobs:
 
       - name: Upload reports if failed
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cupcake-reports
           path: |
@@ -94,7 +94,7 @@ jobs:
 
       - name: Upload coverage if passed
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cupcake-coverage
           path: |
