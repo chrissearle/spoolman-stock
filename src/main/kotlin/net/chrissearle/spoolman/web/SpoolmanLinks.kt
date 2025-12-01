@@ -11,7 +11,7 @@ fun DIV.spoolmanLinks() {
 
         a {
             classes = setOf("list-group-item", "list-group-item-action")
-            href = "/spools"
+            href = "/spool"
             target = "_blank"
 
             +"Spoolman Spools"
@@ -19,7 +19,7 @@ fun DIV.spoolmanLinks() {
 
         a {
             classes = setOf("list-group-item", "list-group-item-action")
-            href = "/filaments"
+            href = "/filament"
             target = "_blank"
 
             +"Spoolman Filaments"
