@@ -1,6 +1,6 @@
 [versions]
 arrow = "2.2.0"
-cohort = "2.8.0"
+cohort = "2.8.1"
 dependency_analysis = "3.5.1"
 detekt = "1.23.8"
 gradle_versions_filter = "0.1.16"
@@ -10,11 +10,11 @@ kotlin = "2.2.21"
 kotlinter = "5.3.0"
 kotlinx_datetime = "0.7.1"
 kotlinx_serialization = "1.9.0"
-kotlinx_serialization_csv = "3.2.0"
+kotlinx_serialization_csv = "3.2.1"
 ktor = "3.3.3"
 logback = "1.5.21"
-mockk = "1.14.6"
-prometheus = "1.16.0"
+mockk = "1.14.7"
+prometheus = "1.16.1"
 qrcode = "4.5.0"
 
 [libraries]
@@ -73,3 +73,4 @@ kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 versions = { id = "se.ascp.gradle.gradle-versions-filter", version.ref = "gradle_versions_filter" }
+
