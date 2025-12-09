@@ -14,7 +14,7 @@ kotlinx_serialization_csv = "3.2.0"
 ktor = "3.3.3"
 logback = "1.5.21"
 mockk = "1.14.6"
-prometheus = "1.16.0"
+prometheus = "1.16.1"
 qrcode = "4.5.0"
 
 [libraries]
