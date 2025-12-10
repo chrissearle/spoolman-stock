@@ -1,115 +1,119 @@
 package net.chrissearle.spoolman.web
 
+import kotlinx.html.BODY
 import kotlinx.html.DIV
 import kotlinx.html.HTML
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.classes
 import kotlinx.html.div
-import kotlinx.html.h1
 import kotlinx.html.h5
 import kotlinx.html.h6
 import kotlinx.html.p
+import kotlinx.html.span
 import kotlinx.html.style
 import net.chrissearle.spoolman.model.StockSummary
 
-fun HTML.stockBody(stock: List<StockSummary>) {
-    body {
-        navbar()
-
+fun BODY.stockBody(stock: List<StockSummary>) {
+    page("Summary") {
         div {
-            classes = setOf("container", "mt-4", "mb-4")
+            attributes["class"] = "grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
 
-            h1 { +"Summary" }
-
-            div {
-                classes =
-                    setOf(
-                        "mb-3",
-                        "fs-6",
-                        "text-body-secondary"
-                    )
-
-                spoolmanLinks()
-            }
-
-            div {
-                classes =
-                    setOf(
-                        "d-flex",
-                        "flex-wrap",
-                        "gap-3",
-                        "justify-content-center"
-                    )
-
-                for (item in stock.sortedWith(
-                    compareByDescending<StockSummary> { it.requiredStock }.thenBy { it.name }
-                )) {
-                    spoolItem(item)
+            for (item in stock.sortedWith(
+                compareByDescending<StockSummary> { it.requiredStock }.thenBy {
+                    it.name ?: ""
                 }
+            )) {
+                spoolItem(item)
             }
         }
-
-        bootstrapScript()
     }
 }
 
 private fun DIV.spoolItem(item: StockSummary) {
+    val name = item.name ?: "Unnamed filament"
+
     div {
-        classes = setOf("card mb-4")
-        style = "width: 30rem;"
+        attributes["class"] =
+            """
+            flex flex-col rounded-lg overflow-hidden
+            border border-slate-800/60
+            bg-slate-900/40
+            shadow-sm
+            """.trimIndent()
 
         div {
-            classes = setOf("row", "g-0")
+            attributes["class"] = "h-4 w-full"
+            style = "background-color: ${item.color};"
+        }
 
-            div {
-                classes = setOf("col-md-2")
-                style = "background-color: ${item.color};"
+        div {
+            attributes["class"] = "flex-1 px-4 py-3 space-y-1"
+
+            h5 {
+                attributes["class"] = "text-base font-semibold"
+                +name
             }
 
-            div {
-                classes = setOf("col-md-10")
+            h6 {
+                attributes["class"] = "text-sm text-slate-400"
+                +"${item.vendor} – ${item.material}"
+            }
 
-                div {
-                    classes = setOf("card-body")
-                    h5 {
-                        classes = setOf("card-title")
+            p {
+                attributes["class"] = "mt-2 text-sm text-slate-300"
+                +"Target: ${item.stock} · Actual: ${item.count} · Unopened: ${item.unopened}"
+            }
+        }
 
-                        +"${item.name}"
-                    }
+        spoolItemFooter(item)
+    }
+}
 
-                    h6 {
-                        classes = setOf("card-subtitle", "mb-2", "text-body-secondary")
+private fun DIV.spoolItemFooter(item: StockSummary) {
+    div {
+        attributes["class"] = "px-4 py-3 border-t border-slate-800 flex items-center justify-between text-sm"
 
-                        +"${item.vendor} - ${item.material}"
-                    }
-
-                    p {
-                        classes = setOf("text-body-secondary", "fs-6", "m-0", "p-0")
-
-                        +"Target: ${item.stock} - Actual: ${item.count} - Unopened: ${item.unopened}"
-                    }
+        span {
+            val requiredClass =
+                if (item.requiredStock > 0) {
+                    """
+                    inline-flex items-center rounded-full bg-rose-500/20
+                    text-rose-300 px-3 py-1 text-xs font-medium
+                    """.trimIndent()
+                } else {
+                    """
+                    inline-flex items-center rounded-full bg-emerald-500/15
+                    text-emerald-300 px-3 py-1 text-xs font-medium
+                    """.trimIndent()
                 }
+
+            attributes["class"] = requiredClass
+            +"Required: ${item.requiredStock}"
+        }
+
+        val buttonClasses =
+            if (item.requiredStock > 0) {
+                """
+                inline-flex items-center justify-center
+                rounded-md px-3 py-1.5 text-xs font-medium
+                bg-sky-500 hover:bg-sky-400
+                text-white
+                focus:outline-none focus:ring-2 focus:ring-sky-500
+                """.trimIndent()
+            } else {
+                """
+                inline-flex items-center justify-center
+                rounded-md px-3 py-1.5 text-xs font-medium
+                bg-slate-700 hover:bg-slate-600
+                text-slate-100
+                focus:outline-none focus:ring-2 focus:ring-slate-500
+                """.trimIndent()
             }
-            div {
-                classes = setOf("text-body-secondary", "card-footer", "fs-6", "text-end")
 
-                +"Required: ${item.requiredStock}"
-
-                val buttonClass =
-                    if (item.requiredStock > 0) {
-                        "btn-primary"
-                    } else {
-                        "btn-secondary"
-                    }
-
-                a {
-                    href = item.shop
-                    classes = setOf("btn", buttonClass, "ms-3", "btn-sm")
-
-                    +"Purchase"
-                }
-            }
+        a(href = item.shop) {
+            attributes["class"] = buttonClasses
+            +"Purchase"
         }
     }
 }

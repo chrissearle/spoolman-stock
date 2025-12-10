@@ -1,87 +1,73 @@
 package net.chrissearle.spoolman.web
 
+import kotlinx.html.BODY
 import kotlinx.html.ButtonType
 import kotlinx.html.DIV
 import kotlinx.html.FormMethod
-import kotlinx.html.HTML
 import kotlinx.html.InputType
 import kotlinx.html.a
-import kotlinx.html.body
 import kotlinx.html.button
-import kotlinx.html.classes
 import kotlinx.html.div
 import kotlinx.html.form
-import kotlinx.html.h1
-import kotlinx.html.h5
+import kotlinx.html.h2
 import kotlinx.html.h6
 import kotlinx.html.id
 import kotlinx.html.input
 import kotlinx.html.p
-import kotlinx.html.span
 import kotlinx.html.style
 import net.chrissearle.spoolman.model.Spool
 
-fun HTML.spoolsBody(spools: List<Spool>) {
-    body {
-        navbar()
+fun BODY.spoolsBody(spools: List<Spool>) {
+    page("Spools") {
+        // Outer layout for this page content
+        attributes["class"] = "space-y-8"
 
-        div {
-            classes = setOf("container", "mt-4", "mb-4")
+        val sortedSpools = spools.sortedByLocation()
 
-            h1 { +"Spools" }
+        // Top location links
+        locationLinks(sortedSpools.keys.toList())
 
+        // Sections per location
+        for ((locationName, locationSpools) in sortedSpools) {
+            // Section header
             div {
-                classes =
-                    setOf(
-                        "mb-3",
-                        "fs-6",
-                        "text-body-secondary"
-                    )
+                id = "location-$locationName"
+                attributes["class"] = "mt-6 space-y-3"
 
-                spoolmanLinks()
-            }
+                h2 {
+                    attributes["class"] = "text-lg font-semibold tracking-tight"
+                    +locationName
+                }
 
-            div {
-                classes =
-                    setOf(
-                        "d-flex",
-                        "flex-wrap",
-                    )
+                // Grid of spool cards for this location
+                div {
+                    attributes["class"] = "grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
 
-                val sortedSpools = spools.sortedByLocation()
-
-                locationLinks(sortedSpools.keys.toList())
-
-                for (location in sortedSpools) {
-                    div {
-                        id = "location-${location.key}"
-                        classes = setOf("w-100", "mb-2", "mt-4")
-                        h5 {
-                            +location.key
-                        }
-                    }
-
-                    val sortedSpools = location.value.sortedBy { it.filamentName ?: "" }
-
-                    for (item in sortedSpools) {
+                    val spoolsAtLocation = locationSpools.sortedBy { it.filamentName ?: "" }
+                    for (item in spoolsAtLocation) {
                         spoolItem(item)
                     }
                 }
             }
         }
-
-        bootstrapScript()
     }
 }
 
 private fun DIV.locationLinks(locations: List<String>) {
     div {
-        classes = setOf("list-group", "list-group-horizontal")
+        attributes["class"] = "flex flex-wrap gap-2"
 
         for (location in locations) {
-            a {
-                classes = setOf("list-group-item", "list-group-item-action")
-                href = "#location-$location"
+            a(href = "#location-$location") {
+                attributes["class"] =
+                    """
+                    inline-flex items-center
+                    rounded-full border border-slate-700
+                    bg-slate-800/60
+                    px-3 py-1 text-xs font-medium
+                    text-slate-100
+                    hover:bg-sky-500 hover:border-sky-500 hover:text-white
+                    """.trimIndent()
 
                 +location
             }
@@ -89,48 +75,49 @@ private fun DIV.locationLinks(locations: List<String>) {
     }
 }
 
-private fun List<Spool>.sortedByLocation() =
-    this
-        .groupBy { it.location ?: "Unspecified Location" }
-        .toSortedMap()
+private fun List<Spool>.sortedByLocation() = this.groupBy { it.location ?: "Unspecified Location" }.toSortedMap()
 
 private fun DIV.spoolItem(item: Spool) {
+    val color = item.filamentColor?.let { "#$it" } ?: "#000000"
+    val name = item.filamentName ?: "Unnamed Spool"
+    val vendor = item.filamentVendor ?: "Unknown Vendor"
+    val material = item.filamentMaterial ?: "Unknown Material"
+
     div {
-        classes = setOf("card")
-        style = "width: 32%;"
+        attributes["class"] =
+            """
+            flex flex-col
+            rounded-lg overflow-hidden
+            border border-slate-800/60
+            bg-slate-900/40
+            shadow-sm
+            """.trimIndent()
         id = "spool-${item.id}"
 
+        // Color bar at top
         div {
-            classes = setOf("row", "g-0")
+            attributes["class"] = "h-3 w-full"
+            style = "background-color: $color;"
+        }
 
-            div {
-                classes = setOf("col-md-2")
-                style = "background-color: #${item.filamentColor ?: "#00000000"};"
+        // Card body
+        div {
+            attributes["class"] = "px-4 py-3 space-y-2"
+
+            // ID + Name
+            h6 {
+                attributes["class"] = "text-sm font-semibold"
+                +"${item.id}: $name"
             }
 
-            div {
-                classes = setOf("col-md-10")
-
-                div {
-                    classes = setOf("card-body")
-                    h6 {
-                        classes = setOf("card-title")
-
-                        span {
-                            +("${item.id}: ")
-                            +(item.filamentName ?: "Unnamed Spool")
-                        }
-                    }
-
-                    p {
-                        classes = setOf("card-subtitle", "mb-2", "text-body-secondary")
-
-                        +"${item.filamentVendor ?: "Unknown Vendor"} - ${item.filamentMaterial ?: "Unknown Material"}"
-                    }
-
-                    weightForm(item)
-                }
+            // Vendor + material
+            p {
+                attributes["class"] = "text-xs text-slate-400"
+                +"$vendor – $material"
             }
+
+            // Form
+            weightForm(item)
         }
     }
 }
@@ -139,36 +126,63 @@ private fun DIV.weightForm(item: Spool) {
     form {
         method = FormMethod.post
         action = "/stock/spool"
+        attributes["class"] =
+            """
+            mt-2
+            space-y-2 sm:space-y-0
+            sm:flex sm:items-center sm:gap-3
+            """.trimIndent()
 
+        // hidden id
         input {
             type = InputType.hidden
             name = "id"
             value = item.id.toString()
         }
 
+        // weight input
         div {
-            classes = setOf("row")
+            attributes["class"] = "sm:flex-1"
 
-            div {
-                classes = setOf("col-sm-8")
-
-                input {
-                    type = InputType.number
-                    name = "weight"
-                    classes = setOf("form-control")
-                    placeholder = "Weight Used (g)"
-                }
+            input {
+                type = InputType.number
+                name = "weight"
+                attributes["class"] =
+                    """
+                    block w-full
+                    rounded-md
+                    border border-slate-700
+                    bg-slate-900/60
+                    px-3 py-1.5
+                    text-xs text-slate-100
+                    placeholder-slate-500
+                    focus:outline-none focus:ring-2
+                    focus:ring-sky-500 focus:border-sky-500
+                    """.trimIndent()
+                placeholder = "Weight used (g)"
+                attributes["min"] = "0"
             }
+        }
 
-            div {
-                classes = setOf("col-sm-4")
+        // submit button
+        div {
+            attributes["class"] = "sm:w-auto"
 
-                button {
-                    classes = setOf("btn", "btn-primary", "btn-sm", "form-control", "col-sm-2")
-                    type = ButtonType.submit
+            button {
+                type = ButtonType.submit
+                attributes["class"] =
+                    """
+                    mt-1 sm:mt-0
+                    inline-flex w-full sm:w-auto
+                    items-center justify-center
+                    rounded-md
+                    bg-sky-500 px-3 py-1.5
+                    text-xs font-medium text-white
+                    hover:bg-sky-400
+                    focus:outline-none focus:ring-2 focus:ring-sky-500
+                    """.trimIndent()
 
-                    +"Use"
-                }
+                +"Use"
             }
         }
     }
