@@ -35,7 +35,6 @@ private fun DIV.locationItem(item: LocationLabel) {
             px-4 py-5
             """.trimIndent()
 
-        // QR image
         img {
             src = "/stock/qr/location/${item.location}"
             alt = "QR Code for ${item.location}"
@@ -44,7 +43,6 @@ private fun DIV.locationItem(item: LocationLabel) {
             attributes["height"] = "150"
         }
 
-        // Location name
         h5 {
             attributes["class"] = "text-base font-semibold text-center"
             +item.location

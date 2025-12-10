@@ -19,17 +19,13 @@ import net.chrissearle.spoolman.model.Spool
 
 fun BODY.spoolsBody(spools: List<Spool>) {
     page("Spools") {
-        // Outer layout for this page content
         attributes["class"] = "space-y-8"
 
         val sortedSpools = spools.sortedByLocation()
 
-        // Top location links
         locationLinks(sortedSpools.keys.toList())
 
-        // Sections per location
         for ((locationName, locationSpools) in sortedSpools) {
-            // Section header
             div {
                 id = "location-$locationName"
                 attributes["class"] = "mt-6 space-y-3"
@@ -39,7 +35,6 @@ fun BODY.spoolsBody(spools: List<Spool>) {
                     +locationName
                 }
 
-                // Grid of spool cards for this location
                 div {
                     attributes["class"] = "grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
 
@@ -94,29 +89,24 @@ private fun DIV.spoolItem(item: Spool) {
             """.trimIndent()
         id = "spool-${item.id}"
 
-        // Color bar at top
         div {
             attributes["class"] = "h-3 w-full"
             style = "background-color: $color;"
         }
 
-        // Card body
         div {
             attributes["class"] = "px-4 py-3 space-y-2"
 
-            // ID + Name
             h6 {
                 attributes["class"] = "text-sm font-semibold"
                 +"${item.id}: $name"
             }
 
-            // Vendor + material
             p {
                 attributes["class"] = "text-xs text-slate-400"
                 +"$vendor – $material"
             }
 
-            // Form
             weightForm(item)
         }
     }
@@ -133,14 +123,12 @@ private fun DIV.weightForm(item: Spool) {
             sm:flex sm:items-center sm:gap-3
             """.trimIndent()
 
-        // hidden id
         input {
             type = InputType.hidden
             name = "id"
             value = item.id.toString()
         }
 
-        // weight input
         div {
             attributes["class"] = "sm:flex-1"
 
@@ -164,7 +152,6 @@ private fun DIV.weightForm(item: Spool) {
             }
         }
 
-        // submit button
         div {
             attributes["class"] = "sm:w-auto"
 

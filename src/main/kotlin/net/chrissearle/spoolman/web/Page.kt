@@ -38,7 +38,7 @@ fun <A> page(block: BODY.(A) -> Unit): HTML.(A) -> Unit =
 val tailwindConfig =
     """
     tailwind.config = {
-      darkMode: 'class', // or 'media'
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
