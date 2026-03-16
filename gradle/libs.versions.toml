@@ -1,6 +1,6 @@
 [versions]
 arrow = "2.2.2"
-cohort = "2.8.2"
+cohort = "2.8.3"
 dependency_analysis = "3.6.1"
 detekt = "1.23.8"
 gradle_versions_filter = "0.1.16"
