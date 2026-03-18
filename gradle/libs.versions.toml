@@ -1,5 +1,5 @@
 [versions]
-arrow = "2.2.2"
+arrow = "2.2.2.1"
 cohort = "2.8.3"
 dependency_analysis = "3.6.1"
 detekt = "1.23.8"
