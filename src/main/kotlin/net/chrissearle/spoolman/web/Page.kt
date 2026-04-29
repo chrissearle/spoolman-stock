@@ -107,7 +107,7 @@ fun DIV.downloadButton(href: String) {
             focus:outline-none focus:ring-2 focus:ring-sky-500
             print:hidden
             """.trimIndent()
-        +"↓ Download TSV"
+        +"↓ Download CSV"
     }
 }
 

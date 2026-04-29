@@ -21,7 +21,7 @@ fun BODY.spoolsBody(spools: List<Spool>) {
     page("Spools") {
         attributes["class"] = "space-y-8"
 
-        downloadButton("/spools.tsv")
+        downloadButton("/spools.csv")
 
         val sortedSpools = spools.sortedByLocation()
 

@@ -27,7 +27,7 @@ import qrcode.color.Colors
 
 private val logger = KotlinLogging.logger {}
 
-private val TSV_CONTENT_TYPE = ContentType("text", "tab-separated-values")
+private val CSV_CONTENT_TYPE = ContentType("text", "csv")
 
 fun Route.webRouting(
     service: SpoolmanService,
@@ -61,16 +61,16 @@ fun Route.webRouting(
         )
     }
 
-    get("/spools.tsv") {
+    get("/spools.csv") {
         logger.logCall(call)
 
         either {
-            service.unarchivedSpools().toSpoolsTsv(service.scanConfig.spoolPrefix)
+            service.unarchivedSpools().toSpoolsCsv(service.scanConfig.spoolPrefix)
         }.respondBytes(
-            contentType = TSV_CONTENT_TYPE,
+            contentType = CSV_CONTENT_TYPE,
             contentDisposition =
                 ContentDisposition.Attachment
-                    .withParameter(ContentDisposition.Parameters.FileName, "spools.tsv")
+                    .withParameter(ContentDisposition.Parameters.FileName, "spools.csv")
         )
     }
 
@@ -101,16 +101,16 @@ private fun Route.qrRouting(
         )
     }
 
-    get("/locations.tsv") {
+    get("/locations.csv") {
         logger.logCall(call)
 
         either {
-            service.locationLabels().toLocationsTsv()
+            service.locationLabels().toLocationsCsv()
         }.respondBytes(
-            contentType = TSV_CONTENT_TYPE,
+            contentType = CSV_CONTENT_TYPE,
             contentDisposition =
                 ContentDisposition.Attachment
-                    .withParameter(ContentDisposition.Parameters.FileName, "locations.tsv")
+                    .withParameter(ContentDisposition.Parameters.FileName, "locations.csv")
         )
     }
 
@@ -135,24 +135,32 @@ private fun Route.qrRouting(
     }
 }
 
-private fun List<LocationLabel>.toLocationsTsv() =
+private fun String.csvQuote() = "\"${replace("\"", "\"\"")}\""
+
+private fun List<LocationLabel>.toLocationsCsv() =
     buildString {
-        appendLine("Location\tScan Link")
-        for (loc in this@toLocationsTsv) {
-            appendLine("${loc.location}\t${loc.link ?: ""}")
+        append("\"Location\",\"Link\"\r\n")
+        for (loc in this@toLocationsCsv) {
+            append("${loc.location.csvQuote()},${(loc.link ?: "").csvQuote()}\r\n")
         }
     }.toByteArray()
 
-private fun List<Spool>.toSpoolsTsv(spoolPrefix: String) =
+private fun List<Spool>.toSpoolsCsv(spoolPrefix: String) =
     buildString {
-        appendLine("ID\tFilament Name\tFilament Material\tFilament Vendor\tScan Link")
-        for (spool in this@toSpoolsTsv) {
-            appendLine(spool.toTsvRow(spoolPrefix))
+        append("\"ID\",\"Name\",\"Material\",\"Vendor\",\"Link\"\r\n")
+        for (spool in this@toSpoolsCsv) {
+            append("${spool.toCsvRow(spoolPrefix)}\r\n")
         }
     }.toByteArray()
 
-private fun Spool.toTsvRow(spoolPrefix: String) =
-    "$id\t${filamentName ?: ""}\t${filamentMaterial ?: ""}\t${filamentVendor ?: ""}\t$spoolPrefix$id"
+private fun Spool.toCsvRow(spoolPrefix: String) =
+    listOf(
+        id.toString(),
+        filamentName ?: "",
+        filamentMaterial ?: "",
+        filamentVendor ?: "",
+        "$spoolPrefix$id",
+    ).joinToString(",") { it.csvQuote() }
 
 private fun String.qrBytes() =
     QRCode
