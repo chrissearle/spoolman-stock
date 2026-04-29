@@ -4,6 +4,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.cio.EngineMain
 import net.chrissearle.spoolman.ApiConfig
 import net.chrissearle.spoolman.ScanConfig
+import net.chrissearle.spoolman.WebConfig
 import net.chrissearle.spoolman.configureSpoolmanRouting
 import net.chrissearle.spoolman.spoolmanApi
 import net.chrissearle.spoolman.spoolmanService
@@ -18,6 +19,7 @@ fun Application.module() {
     val client = configureClient()
     val apiConfig = ApiConfig(confStr("spoolman.apiHost"))
     val scanConfig = ScanConfig(confStr("spoolman.scanHost"))
+    val webConfig = WebConfig(confStr("spoolman.webHost"))
 
     val spoolmanApi = spoolmanApi(apiConfig, client)
 
@@ -31,10 +33,12 @@ fun Application.module() {
     configureMonitoring(upstreamHealthCheck)
 
     configureSpoolmanRouting(
-        spoolmanService(
-            spoolmanApi = spoolmanApi,
-            scanConfig = scanConfig,
-            startLocations = confList("spoolman.startLocations")
-        )
+        service =
+            spoolmanService(
+                spoolmanApi = spoolmanApi,
+                scanConfig = scanConfig,
+                startLocations = confList("spoolman.startLocations")
+            ),
+        webConfig = webConfig,
     )
 }

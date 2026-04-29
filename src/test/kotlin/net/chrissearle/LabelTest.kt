@@ -17,6 +17,7 @@ import io.ktor.utils.io.ByteReadChannel
 import net.chrissearle.spoolman.ApiConfig
 import net.chrissearle.spoolman.ScanConfig
 import net.chrissearle.spoolman.SpoolmanApi
+import net.chrissearle.spoolman.WebConfig
 import net.chrissearle.spoolman.configureSpoolmanRouting
 import net.chrissearle.spoolman.model.LocationLabel
 import net.chrissearle.spoolman.model.SpoolLabel
@@ -123,7 +124,8 @@ private fun buildService(engine: MockEngine) =
 private fun ApplicationTestBuilder.buildTestApplication(engine: MockEngine) {
     serializedTestApplication {
         configureSpoolmanRouting(
-            buildService(engine)
+            service = buildService(engine),
+            webConfig = WebConfig(spoolmanHost = ""),
         )
     }
 }

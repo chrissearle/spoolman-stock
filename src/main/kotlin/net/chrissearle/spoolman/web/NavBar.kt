@@ -11,7 +11,7 @@ import kotlinx.html.id
 import kotlinx.html.nav
 import kotlinx.html.span
 
-fun BODY.navbar() {
+fun BODY.navbar(spoolmanHost: String) {
     nav {
         attributes["class"] =
             """
@@ -52,7 +52,7 @@ fun BODY.navbar() {
                             +"Spools"
                         }
 
-                        subMenu()
+                        subMenu(spoolmanHost)
                     }
                 }
 
@@ -60,11 +60,11 @@ fun BODY.navbar() {
             }
         }
 
-        mobileNav()
+        mobileNav(spoolmanHost)
     }
 }
 
-private fun DIV.subMenu() {
+private fun DIV.subMenu(spoolmanHost: String) {
     div {
         attributes["class"] = "relative"
 
@@ -90,11 +90,11 @@ private fun DIV.subMenu() {
             }
         }
 
-        spoolmanSubMenu()
+        spoolmanSubMenu(spoolmanHost)
     }
 }
 
-private fun DIV.spoolmanSubMenu() {
+private fun DIV.spoolmanSubMenu(spoolmanHost: String) {
     div {
         id = "spoolman-dropdown"
         attributes["class"] =
@@ -108,19 +108,19 @@ private fun DIV.spoolmanSubMenu() {
         div {
             attributes["class"] = "py-1"
 
-            a(href = "/spool") {
+            a(href = "$spoolmanHost/spool") {
                 target = "_blank"
                 attributes["class"] = "block px-4 py-2 text-sm hover:bg-slate-700"
                 +"Spoolman Spools"
             }
 
-            a(href = "/filament") {
+            a(href = "$spoolmanHost/filament") {
                 target = "_blank"
                 attributes["class"] = "block px-4 py-2 text-sm hover:bg-slate-700"
                 +"Spoolman Filaments"
             }
 
-            a(href = "/locations") {
+            a(href = "$spoolmanHost/locations") {
                 target = "_blank"
                 attributes["class"] = "block px-4 py-2 text-sm hover:bg-slate-700"
                 +"Spoolman Locations"
@@ -165,7 +165,7 @@ private fun DIV.mobileMenuButton() {
     }
 }
 
-private fun NAV.mobileNav() {
+private fun NAV.mobileNav(spoolmanHost: String) {
     div {
         id = "mobile-menu"
         attributes["class"] = "md:hidden hidden border-t border-slate-800 bg-slate-900"
@@ -202,19 +202,19 @@ private fun NAV.mobileNav() {
                 +"Spoolman"
             }
 
-            a(href = "/spool") {
+            a(href = "$spoolmanHost/spool") {
                 target = "_blank"
                 attributes["class"] = "block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-800"
                 +"Spoolman Spools"
             }
 
-            a(href = "/filament") {
+            a(href = "$spoolmanHost/filament") {
                 target = "_blank"
                 attributes["class"] = "block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-800"
                 +"Spoolman Filaments"
             }
 
-            a(href = "/locations") {
+            a(href = "$spoolmanHost/locations") {
                 target = "_blank"
                 attributes["class"] = "block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-800"
                 +"Spoolman Locations"

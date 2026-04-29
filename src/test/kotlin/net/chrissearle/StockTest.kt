@@ -18,6 +18,7 @@ import io.ktor.utils.io.ByteReadChannel
 import net.chrissearle.spoolman.ApiConfig
 import net.chrissearle.spoolman.ScanConfig
 import net.chrissearle.spoolman.SpoolmanApi
+import net.chrissearle.spoolman.WebConfig
 import net.chrissearle.spoolman.configureSpoolmanRouting
 import net.chrissearle.spoolman.model.StockSummary
 import net.chrissearle.spoolman.spoolmanApi
@@ -127,7 +128,8 @@ private fun buildService(api: SpoolmanApi) =
 private fun ApplicationTestBuilder.buildTestApplication(api: SpoolmanApi) {
     serializedTestApplication {
         configureSpoolmanRouting(
-            buildService(api)
+            service = buildService(api),
+            webConfig = WebConfig(spoolmanHost = ""),
         )
     }
 }

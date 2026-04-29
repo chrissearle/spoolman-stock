@@ -14,6 +14,8 @@ import net.chrissearle.api.redirect
 import net.chrissearle.api.respondBytes
 import net.chrissearle.api.respondHtml
 import net.chrissearle.logCall
+import net.chrissearle.spoolman.model.LocationLabel
+import net.chrissearle.spoolman.model.Spool
 import net.chrissearle.spoolman.model.SpoolWeightUsed
 import net.chrissearle.spoolman.scan.ScanLocation
 import net.chrissearle.spoolman.web.locationsBody
@@ -25,37 +27,16 @@ import qrcode.color.Colors
 
 private val logger = KotlinLogging.logger {}
 
-fun Route.webRouting(service: SpoolmanService) {
+private val TSV_CONTENT_TYPE = ContentType("text", "tab-separated-values")
+
+fun Route.webRouting(
+    service: SpoolmanService,
+    webConfig: WebConfig
+) {
+    val spoolmanHost = webConfig.spoolmanHost
+
     route("/qr") {
-        get("/locations") {
-            either {
-                service.locationLabels(true)
-            }.respondHtml(
-                page { locations ->
-                    locationsBody(locations)
-                }
-            )
-        }
-
-        get("/location/{location}") {
-            logger.logCall(call)
-
-            either {
-                val location = service.getLocation(ScanLocation(call.parameters["location"]).bind())
-
-                val label = service.locationLabel(location)
-
-                (label.link ?: label.location).qrBytes()
-            }.respondBytes(
-                contentType = ContentType.Image.PNG,
-                contentDisposition =
-                    ContentDisposition.Attachment
-                        .withParameter(
-                            ContentDisposition.Parameters.FileName,
-                            "location-${call.parameters["location"]}.png"
-                        )
-            )
-        }
+        qrRouting(service, spoolmanHost)
     }
 
     post("/spool") {
@@ -74,9 +55,22 @@ fun Route.webRouting(service: SpoolmanService) {
         either {
             service.unarchivedSpools()
         }.respondHtml(
-            page { spools ->
+            page(spoolmanHost) { spools ->
                 spoolsBody(spools)
             }
+        )
+    }
+
+    get("/spools.tsv") {
+        logger.logCall(call)
+
+        either {
+            service.unarchivedSpools().toSpoolsTsv(service.scanConfig.spoolPrefix)
+        }.respondBytes(
+            contentType = TSV_CONTENT_TYPE,
+            contentDisposition =
+                ContentDisposition.Attachment
+                    .withParameter(ContentDisposition.Parameters.FileName, "spools.tsv")
         )
     }
 
@@ -86,12 +80,79 @@ fun Route.webRouting(service: SpoolmanService) {
         either {
             service.stockSummaries()
         }.respondHtml(
-            page { stock ->
+            page(spoolmanHost) { stock ->
                 stockBody(stock)
             }
         )
     }
 }
+
+private fun Route.qrRouting(
+    service: SpoolmanService,
+    spoolmanHost: String
+) {
+    get("/locations") {
+        either {
+            service.locationLabels(true)
+        }.respondHtml(
+            page(spoolmanHost) { locations ->
+                locationsBody(locations)
+            }
+        )
+    }
+
+    get("/locations.tsv") {
+        logger.logCall(call)
+
+        either {
+            service.locationLabels().toLocationsTsv()
+        }.respondBytes(
+            contentType = TSV_CONTENT_TYPE,
+            contentDisposition =
+                ContentDisposition.Attachment
+                    .withParameter(ContentDisposition.Parameters.FileName, "locations.tsv")
+        )
+    }
+
+    get("/location/{location}") {
+        logger.logCall(call)
+
+        either {
+            val location = service.getLocation(ScanLocation(call.parameters["location"]).bind())
+
+            val label = service.locationLabel(location)
+
+            (label.link ?: label.location).qrBytes()
+        }.respondBytes(
+            contentType = ContentType.Image.PNG,
+            contentDisposition =
+                ContentDisposition.Attachment
+                    .withParameter(
+                        ContentDisposition.Parameters.FileName,
+                        "location-${call.parameters["location"]}.png"
+                    )
+        )
+    }
+}
+
+private fun List<LocationLabel>.toLocationsTsv() =
+    buildString {
+        appendLine("Location\tScan Link")
+        for (loc in this@toLocationsTsv) {
+            appendLine("${loc.location}\t${loc.link ?: ""}")
+        }
+    }.toByteArray()
+
+private fun List<Spool>.toSpoolsTsv(spoolPrefix: String) =
+    buildString {
+        appendLine("ID\tFilament Name\tFilament Material\tFilament Vendor\tScan Link")
+        for (spool in this@toSpoolsTsv) {
+            appendLine(spool.toTsvRow(spoolPrefix))
+        }
+    }.toByteArray()
+
+private fun Spool.toTsvRow(spoolPrefix: String) =
+    "$id\t${filamentName ?: ""}\t${filamentMaterial ?: ""}\t${filamentVendor ?: ""}\t$spoolPrefix$id"
 
 private fun String.qrBytes() =
     QRCode

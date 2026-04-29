@@ -3,6 +3,7 @@ package net.chrissearle.spoolman.web
 import kotlinx.html.BODY
 import kotlinx.html.DIV
 import kotlinx.html.HTML
+import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.classes
 import kotlinx.html.div
@@ -13,7 +14,10 @@ import kotlinx.html.style
 import kotlinx.html.title
 import kotlinx.html.unsafe
 
-fun <A> page(block: BODY.(A) -> Unit): HTML.(A) -> Unit =
+fun <A> page(
+    spoolmanHost: String,
+    block: BODY.(A) -> Unit
+): HTML.(A) -> Unit =
     {
         attributes["class"] = "dark"
 
@@ -29,7 +33,7 @@ fun <A> page(block: BODY.(A) -> Unit): HTML.(A) -> Unit =
                     "dark:text-slate-100"
                 )
 
-            navbar()
+            navbar(spoolmanHost)
 
             block(it)
         }
@@ -88,6 +92,22 @@ private fun HTML.pageHead() {
                 +printStylesheet
             }
         }
+    }
+}
+
+fun DIV.downloadButton(href: String) {
+    a(href = href) {
+        attributes["class"] =
+            """
+            inline-flex items-center
+            rounded-md px-3 py-1.5 text-xs font-medium
+            bg-slate-800 hover:bg-slate-700
+            border border-slate-700
+            text-slate-100
+            focus:outline-none focus:ring-2 focus:ring-sky-500
+            print:hidden
+            """.trimIndent()
+        +"↓ Download TSV"
     }
 }
 

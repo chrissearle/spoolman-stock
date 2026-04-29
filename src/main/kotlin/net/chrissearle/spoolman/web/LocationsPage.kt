@@ -10,6 +10,10 @@ import net.chrissearle.spoolman.model.LocationLabel
 
 fun BODY.locationsBody(locations: List<LocationLabel>) {
     page("Locations") {
+        attributes["class"] = "space-y-6"
+
+        downloadButton("/qr/locations.tsv")
+
         div {
             attributes["class"] = "grid gap-6 sm:grid-cols-2 xl:grid-cols-3 locations-grid"
 

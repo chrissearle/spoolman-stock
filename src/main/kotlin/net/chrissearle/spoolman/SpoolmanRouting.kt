@@ -8,7 +8,10 @@ import io.ktor.server.sessions.cookie
 import net.chrissearle.spoolman.scan.CONTEXT_TTL_S
 import net.chrissearle.spoolman.scan.ScanContext
 
-fun Application.configureSpoolmanRouting(service: SpoolmanService) {
+fun Application.configureSpoolmanRouting(
+    service: SpoolmanService,
+    webConfig: WebConfig
+) {
     install(Sessions) {
         cookie<ScanContext>("scan_context") {
             cookie.path = "/scan"
@@ -21,6 +24,6 @@ fun Application.configureSpoolmanRouting(service: SpoolmanService) {
 
         scanRouting(service)
 
-        webRouting(service)
+        webRouting(service, webConfig)
     }
 }
