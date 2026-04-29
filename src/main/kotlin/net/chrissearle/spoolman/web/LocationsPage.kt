@@ -36,7 +36,7 @@ private fun DIV.locationItem(item: LocationLabel) {
             """.trimIndent()
 
         img {
-            src = "/stock/qr/location/${item.location}"
+            src = "/qr/location/${item.location}"
             alt = "QR Code for ${item.location}"
             attributes["class"] = "mb-4"
             attributes["width"] = "150"

@@ -43,7 +43,7 @@ fun Application.configureMonitoring(upstreamHealthCheck: UpstreamHealthCheck) {
     }
     install(CallLogging) {
         level = Level.INFO
-        filter { call -> call.request.path().startsWith("/stock") }
+        filter { call -> !call.request.path().startsWith("/readiness") }
         callIdMdc("call-id")
     }
     install(CallId) {
@@ -58,17 +58,17 @@ fun Application.configureMonitoring(upstreamHealthCheck: UpstreamHealthCheck) {
             register("upstream-api", upstreamHealthCheck, 3.seconds, 10.seconds)
         }
     install(Cohort) {
-        healthcheck("/stock/readiness", readinessChecks)
+        healthcheck("/readiness", readinessChecks)
     }
 
     routing {
-        get("/stock/api/metrics") {
+        get("/api/metrics") {
             logger.logCall(call)
 
             call.respond(appMicrometerRegistry.scrape())
         }
 
-        get("/stock/version") {
+        get("/version") {
             logger.logCall(call)
 
             either {

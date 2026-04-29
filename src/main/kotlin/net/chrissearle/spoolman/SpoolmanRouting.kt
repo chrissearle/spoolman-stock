@@ -2,7 +2,6 @@ package net.chrissearle.spoolman
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
-import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.sessions.Sessions
 import io.ktor.server.sessions.cookie
@@ -12,18 +11,16 @@ import net.chrissearle.spoolman.scan.ScanContext
 fun Application.configureSpoolmanRouting(service: SpoolmanService) {
     install(Sessions) {
         cookie<ScanContext>("scan_context") {
-            cookie.path = "/stock/scan"
+            cookie.path = "/scan"
             cookie.maxAgeInSeconds = CONTEXT_TTL_S.inWholeSeconds
         }
     }
 
     routing {
-        route("/stock") {
-            apiRouting(service)
+        apiRouting(service)
 
-            scanRouting(service)
+        scanRouting(service)
 
-            webRouting(service)
-        }
+        webRouting(service)
     }
 }

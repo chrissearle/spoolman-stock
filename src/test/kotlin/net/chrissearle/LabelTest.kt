@@ -40,7 +40,7 @@ class LabelTest :
                 val client = buildTestClient()
 
                 client
-                    .get("/stock/api/spools") {
+                    .get("/api/spools") {
                         accept(ContentType.Application.Json)
                     }.apply {
                         status shouldBe HttpStatusCode.OK
@@ -68,7 +68,7 @@ class LabelTest :
                 val client = buildTestClient()
 
                 client
-                    .get("/stock/api/locations") {
+                    .get("/api/locations") {
                         accept(ContentType.Application.Json)
                     }.apply {
                         status shouldBe HttpStatusCode.OK
@@ -96,7 +96,7 @@ class LabelTest :
                 val client = buildTestClient()
 
                 client
-                    .get("/stock/api/locations") {
+                    .get("/api/locations") {
                         accept(ContentType.Application.Json)
                     }.apply {
                         status shouldBe HttpStatusCode.OK

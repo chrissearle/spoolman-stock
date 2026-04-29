@@ -29,7 +29,7 @@ fun BODY.navbar() {
                 div {
                     attributes["class"] = "flex items-center"
 
-                    a(href = "/stock") {
+                    a(href = "/") {
                         attributes["class"] = "text-lg font-semibold tracking-tight"
                         +"Spoolman Stock"
                     }
@@ -37,17 +37,17 @@ fun BODY.navbar() {
                     div {
                         attributes["class"] = "hidden md:flex md:items-center md:space-x-4 ml-8"
 
-                        a(href = "/stock") {
+                        a(href = "/") {
                             attributes["class"] = "text-sm font-medium hover:text-sky-400"
                             +"Stock Summary"
                         }
 
-                        a(href = "/stock/qr/locations") {
+                        a(href = "/qr/locations") {
                             attributes["class"] = "text-sm font-medium hover:text-sky-400"
                             +"Locations QR Codes"
                         }
 
-                        a(href = "/stock/spools") {
+                        a(href = "/spools") {
                             attributes["class"] = "text-sm font-medium hover:text-sky-400"
                             +"Spools"
                         }
@@ -178,17 +178,17 @@ private fun NAV.mobileNav() {
                 +"Spoolman"
             }
 
-            a(href = "/stock") {
+            a(href = "/") {
                 attributes["class"] = "block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-800"
                 +"Stock Summary"
             }
 
-            a(href = "/stock/qr/locations") {
+            a(href = "/qr/locations") {
                 attributes["class"] = "block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-800"
                 +"Locations QR Codes"
             }
 
-            a(href = "/stock/spools") {
+            a(href = "/spools") {
                 attributes["class"] = "block px-3 py-2 rounded-md text-base font-medium hover:bg-slate-800"
                 +"Spools"
             }

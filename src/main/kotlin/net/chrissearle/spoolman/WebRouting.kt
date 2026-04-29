@@ -65,7 +65,7 @@ fun Route.webRouting(service: SpoolmanService) {
             val formParameters: Parameters = call.receiveParameters()
 
             service.useSpoolWeight(SpoolWeightUsed(formParameters["id"], formParameters["weight"]).bind())
-        }.redirect("/stock/spools")
+        }.redirect("/spools")
     }
 
     get("/spools") {

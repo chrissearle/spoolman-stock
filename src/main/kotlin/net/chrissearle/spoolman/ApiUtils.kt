@@ -34,7 +34,7 @@ data class ApiConfig(
 data class ScanConfig(
     val scanHost: String
 ) {
-    val locationPrefix = "$scanHost/stock/scan/location/"
-    val spoolPrefix = "$scanHost/stock/scan/spool/"
-    val clearUrl = "$scanHost/stock/scan/clear"
+    val locationPrefix = "$scanHost/scan/location/"
+    val spoolPrefix = "$scanHost/scan/spool/"
+    val clearUrl = "$scanHost/scan/clear"
 }

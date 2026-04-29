@@ -98,7 +98,7 @@ class StockTest :
                 val client = buildTestClient()
 
                 client
-                    .get("/stock/api/stock") {
+                    .get("/api/stock") {
                         accept(ContentType.Application.Json)
                     }.apply {
                         status shouldBe HttpStatusCode.OK

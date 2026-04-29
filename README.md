@@ -4,7 +4,7 @@ Provide an overview of what filament spools require replacing.
 
 Expects to be installed alongside spoolman.
 
-Expects to be located at URL_TO_SPOOLMAN + '/stock'.
+Runs on its own domain (not a subpath of spoolman).
 
 Is based on spool first used - rather than weight remaining (I don't use the weight functions as I have no system that
 will auto update this information - I only flag "started" and "empty" by hand)
@@ -26,19 +26,19 @@ SPOOLMAN_SCAN_HOST=https://public-hostname.of.spoolman
 ```
 
 * `SPOOLMAN_API_HOST` - the host where the app can reach the Spoolman API
-* `SPOOLMAN_SCAN_HOST` - the host where the user can reach Spoolman
+* `SPOOLMAN_SCAN_HOST` - the public hostname of this app (used to generate scan QR code URLs)
 
 ## Usage
 
-* HTML page to show what should be reordered: `https://HOSTNAME/stock/`
-* HTML page to show location QR codes: `https://HOSTNAME/stock/qr/locations`
+* HTML page to show what should be reordered: `https://HOSTNAME/`
+* HTML page to show location QR codes: `https://HOSTNAME/qr/locations`
 
-* Location scan page: `https://HOSTNAME/stock/scan/location/LOCATION_NAME`
-* Spool scan page: `https://HOSTNAME/stock/scan/spool/SPOOL_ID`
-* Clear scan page: `https://HOSTNAME/stock/scan/clear`
+* Location scan page: `https://HOSTNAME/scan/location/LOCATION_NAME`
+* Spool scan page: `https://HOSTNAME/scan/spool/SPOOL_ID`
+* Clear scan page: `https://HOSTNAME/scan/clear`
 
-* Location api page: `https://HOSTNAME/stock/api/locations`
-* Spool api page: `https://HOSTNAME/stock/api/spools`
+* Location api page: `https://HOSTNAME/api/locations`
+* Spool api page: `https://HOSTNAME/api/spools`
 
 ## Scanning
 

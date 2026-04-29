@@ -17,7 +17,7 @@ class MetricsTest :
                     configureMonitoring(mockk<UpstreamHealthCheck>())
                 }
 
-                client.get("/stock/api/metrics").apply {
+                client.get("/api/metrics").apply {
                     status shouldBe HttpStatusCode.OK
 
                     val bodyText = bodyAsText()

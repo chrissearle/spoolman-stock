@@ -115,7 +115,7 @@ private fun DIV.spoolItem(item: Spool) {
 private fun DIV.weightForm(item: Spool) {
     form {
         method = FormMethod.post
-        action = "/stock/spool"
+        action = "/spool"
         attributes["class"] =
             """
             mt-2
