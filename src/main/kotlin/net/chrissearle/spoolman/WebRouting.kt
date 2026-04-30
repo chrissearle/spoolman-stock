@@ -14,8 +14,6 @@ import net.chrissearle.api.redirect
 import net.chrissearle.api.respondBytes
 import net.chrissearle.api.respondHtml
 import net.chrissearle.logCall
-import net.chrissearle.spoolman.model.LocationLabel
-import net.chrissearle.spoolman.model.Spool
 import net.chrissearle.spoolman.model.SpoolWeightUsed
 import net.chrissearle.spoolman.scan.ScanLocation
 import net.chrissearle.spoolman.web.locationsBody
@@ -65,7 +63,7 @@ fun Route.webRouting(
         logger.logCall(call)
 
         either {
-            service.unarchivedSpools().toSpoolsCsv(service.scanConfig.spoolPrefix)
+            service.unarchivedSpools().toCsv(service.scanConfig.spoolPrefix)
         }.respondBytes(
             contentType = CSV_CONTENT_TYPE,
             contentDisposition =
@@ -105,7 +103,7 @@ private fun Route.qrRouting(
         logger.logCall(call)
 
         either {
-            service.locationLabels().toLocationsCsv()
+            service.locationLabels().toCsv()
         }.respondBytes(
             contentType = CSV_CONTENT_TYPE,
             contentDisposition =
@@ -134,33 +132,6 @@ private fun Route.qrRouting(
         )
     }
 }
-
-private fun String.csvQuote() = "\"${replace("\"", "\"\"")}\""
-
-private fun List<LocationLabel>.toLocationsCsv() =
-    buildString {
-        append("\"Location\",\"Link\"\r\n")
-        for (loc in this@toLocationsCsv) {
-            append("${loc.location.csvQuote()},${(loc.link ?: "").csvQuote()}\r\n")
-        }
-    }.toByteArray()
-
-private fun List<Spool>.toSpoolsCsv(spoolPrefix: String) =
-    buildString {
-        append("\"ID\",\"Name\",\"Material\",\"Vendor\",\"Link\"\r\n")
-        for (spool in this@toSpoolsCsv) {
-            append("${spool.toCsvRow(spoolPrefix)}\r\n")
-        }
-    }.toByteArray()
-
-private fun Spool.toCsvRow(spoolPrefix: String) =
-    listOf(
-        id.toString(),
-        filamentName ?: "",
-        filamentMaterial ?: "",
-        filamentVendor ?: "",
-        "$spoolPrefix$id",
-    ).joinToString(",") { it.csvQuote() }
 
 private fun String.qrBytes() =
     QRCode
