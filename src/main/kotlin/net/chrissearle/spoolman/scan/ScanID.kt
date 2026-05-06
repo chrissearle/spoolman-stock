@@ -1,7 +1,7 @@
 package net.chrissearle.spoolman.scan
 
 import arrow.core.raise.either
-import arrow.core.raise.ensure
+import arrow.core.raise.ensureNotNull
 import kotlinx.serialization.Serializable
 import net.chrissearle.api.IdRequired
 import net.chrissearle.api.NotNumeric
@@ -13,9 +13,9 @@ data class ScanID(
     companion object {
         operator fun invoke(id: String?) =
             either {
-                ensure(!id.isNullOrBlank()) { IdRequired }
-                ensure(id.toIntOrNull() != null) { NotNumeric("id", id) }
-                ScanID(id.toInt())
+                val present = ensureNotNull(id?.takeIf { it.isNotBlank() }) { IdRequired }
+                val parsed = ensureNotNull(present.toIntOrNull()) { NotNumeric("id", id) }
+                ScanID(parsed)
             }
     }
 }

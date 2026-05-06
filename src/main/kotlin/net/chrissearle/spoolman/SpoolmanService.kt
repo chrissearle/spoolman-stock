@@ -23,7 +23,7 @@ class SpoolmanService(
     val scanConfig: ScanConfig,
     val startLocations: List<String>,
 ) {
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun stockSummaries(): List<StockSummary> {
         val spools = unarchivedSpools()
 
@@ -44,21 +44,20 @@ class SpoolmanService(
             }.also { logger.info { "Successfully fetched ${it.count()} stock spools." } }
     }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun stockFilaments() =
         spoolmanApi
             .fetchFilaments()
-            .filter { it.stock != null }
-            .filter { it.stock!! > 0 }
-            .filter { !it.shopUrl.isNullOrBlank() }
-            .filter { it.color != null }
+            .asSequence()
+            .filter { (it.stock ?: 0) > 0 && !it.shopUrl.isNullOrBlank() && it.color != null }
             .map { it.copy(shopUrl = it.shopUrl!!.normalizeShopUrl()) }
+            .toList()
             .also { logger.info { "Successfully fetched ${it.count()} stock filaments." } }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun spoolLabels() = unarchivedSpools().map { it.toLabel(scanConfig.spoolPrefix) }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun locationLabels(includeClear: Boolean = false) =
         spoolmanApi
             .fetchLocations()
@@ -72,7 +71,7 @@ class SpoolmanService(
                 }
             }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun locationLabel(location: ScanLocation) =
         getLocation(location).let {
             if (it.location == "clear") {
@@ -82,21 +81,17 @@ class SpoolmanService(
             }
         }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun unarchivedSpools() =
         spoolmanApi
             .fetchSpools()
             .filter { !it.archived }
             .also { logger.info { "Successfully fetched ${it.count()} non-archived spools." } }
 
-    context(raise: Raise<ApiError>)
-    suspend fun getSpool(spool: ScanID): ScanID {
-        val spool = spoolmanApi.getSpool(spool.id)
+    context(_: Raise<ApiError>)
+    suspend fun getSpool(scanID: ScanID): ScanID = scanID.also { spoolmanApi.getSpool(it.id) }
 
-        return ScanID(spool.id)
-    }
-
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun getLocation(location: ScanLocation): ScanLocation {
         if (location.location == "clear" || location.location == "Ext") {
             return location
@@ -109,7 +104,7 @@ class SpoolmanService(
         return location
     }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun updateSpoolLocation(
         spool: ScanID,
         location: ScanLocation
@@ -126,10 +121,10 @@ class SpoolmanService(
         )
     }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun updateSpoolFirstUsed(spool: Int): SpoolWithFirstUsed = spoolmanApi.updateFirstUsed(spool)
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun useSpoolWeight(spoolWeightUsed: SpoolWeightUsed) {
         spoolmanApi.useFilament(spoolWeightUsed.id, spoolWeightUsed.weight)
     }

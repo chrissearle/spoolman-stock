@@ -2,7 +2,6 @@ package net.chrissearle.api
 
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
-import net.chrissearle.HttpStatusCodeSerializer
 
 @Serializable
 data class ErrorResponse(
@@ -12,27 +11,26 @@ data class ErrorResponse(
     val fieldValue: String? = null,
 )
 
-sealed class ApiError(
-    protected open val errorResponse: ErrorResponse,
-) {
-    open fun messageMap(): Map<String, ErrorResponse> = mapOf("error" to errorResponse)
-
-    fun status() = this.errorResponse.status
+sealed interface ApiError {
+    val response: ErrorResponse
 }
+
+fun ApiError.status() = response.status
+
+fun ApiError.messageMap(): Map<String, ErrorResponse> =
+    when (this) {
+        is UpstreamError -> mapOf("upstream" to upstream, "error" to response)
+        else -> mapOf("error" to response)
+    }
 
 abstract class UpstreamError(
     open val upstream: ErrorResponse,
     val systemName: String,
-) : ApiError(
+) : ApiError {
+    override val response =
         ErrorResponse(
             status = HttpStatusCode.InternalServerError,
             message = "call to $systemName failed",
-        ),
-    ) {
-    override fun messageMap() =
-        mapOf(
-            "upstream" to upstream,
-            "error" to errorResponse,
         )
 }
 
@@ -45,12 +43,13 @@ data class SpoolmanCallFailed(
 
 abstract class RequiredField(
     val fieldName: String,
-) : ApiError(
+) : ApiError {
+    override val response =
         ErrorResponse(
             status = HttpStatusCode.BadRequest,
             message = "$fieldName required"
         )
-    )
+}
 
 data object IdRequired : RequiredField(fieldName = "id")
 
@@ -61,21 +60,31 @@ data object WeightRequired : RequiredField(fieldName = "weight")
 data class NotNumeric(
     val field: String,
     val value: String?
-) : ApiError(ErrorResponse(status = HttpStatusCode.BadRequest, message = "$field was not numeric: $value"))
+) : ApiError {
+    override val response =
+        ErrorResponse(status = HttpStatusCode.BadRequest, message = "$field was not numeric: $value")
+}
 
 data class SpoolNotFound(
     val id: Int
-) : ApiError(ErrorResponse(status = HttpStatusCode.NotFound, message = "Spool not found: $id"))
+) : ApiError {
+    override val response =
+        ErrorResponse(status = HttpStatusCode.NotFound, message = "Spool not found: $id")
+}
 
 data class LocationNotFound(
     val location: String
-) : ApiError(ErrorResponse(status = HttpStatusCode.NotFound, message = "Location not found: $location"))
+) : ApiError {
+    override val response =
+        ErrorResponse(status = HttpStatusCode.NotFound, message = "Location not found: $location")
+}
 
 data class VersionNotReadable(
     val e: Throwable
-) : ApiError(
+) : ApiError {
+    override val response =
         ErrorResponse(
             status = HttpStatusCode.InternalServerError,
             message = "${e.message}"
         )
-    )
+}

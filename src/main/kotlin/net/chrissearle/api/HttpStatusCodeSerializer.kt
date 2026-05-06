@@ -1,4 +1,4 @@
-package net.chrissearle
+package net.chrissearle.api
 
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.KSerializer

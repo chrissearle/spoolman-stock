@@ -1,10 +1,11 @@
 package net.chrissearle.spoolman
 
 import arrow.core.raise.Raise
-import arrow.core.raise.ensure
+import arrow.core.raise.context.ensure
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.headers
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
@@ -33,30 +34,27 @@ class SpoolmanApi(
     val apiConfig: ApiConfig,
     val httpClient: HttpClient,
 ) {
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun fetchSpools() =
         fetch<Spool>(apiConfig.exportSpools)
             .also { logger.info { "Successfully fetched ${it.count()} spools." } }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun fetchFilaments() =
         fetch<Filament>(apiConfig.exportFilaments)
             .also { logger.info { "Successfully fetched ${it.count()} filaments." } }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend inline fun <reified T> fetch(url: String) =
         httpClient
             .request(url) {
-                headers {
-                    append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                    append(HttpHeaders.Accept, ContentType.Application.Json.toString())
-                }
+                jsonHeaders()
             }.valid()
             .body<List<T>>()
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun HttpResponse.valid(notFoundError: ApiError? = null): HttpResponse {
-        raise.ensure(this.status.isSuccess()) {
+        ensure(this.status.isSuccess()) {
             val upstreamBody = this.body<String>()
 
             logger.warn { "Failed to fetch data from bring - ${this.status} - $upstreamBody" }
@@ -71,46 +69,37 @@ class SpoolmanApi(
         return this
     }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun fetchLocations() =
         fetch<String>(apiConfig.locations)
             .also { logger.info { "Successfully fetched ${it.count()} locations." } }
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun getSpool(id: Int) =
         httpClient
             .request(apiConfig.spoolPrefix + "$id") {
-                headers {
-                    append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                    append(HttpHeaders.Accept, ContentType.Application.Json.toString())
-                }
+                jsonHeaders()
             }.valid(SpoolNotFound(id))
             .body<SpoolWithLocation>()
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun updateLocation(
         spoolId: Int,
         location: String
     ) = httpClient
         .request(apiConfig.spoolPrefix + "$spoolId") {
             method = HttpMethod.Patch
-            headers {
-                append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                append(HttpHeaders.Accept, ContentType.Application.Json.toString())
-            }
+            jsonHeaders()
             setBody(SpoolWithLocation(spoolId, location))
         }.valid(SpoolNotFound(spoolId))
         .body<SpoolWithLocationAndFirstUsed>()
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun updateFirstUsed(spoolId: Int) =
         httpClient
             .request(apiConfig.spoolPrefix + "$spoolId") {
                 method = HttpMethod.Patch
-                headers {
-                    append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                    append(HttpHeaders.Accept, ContentType.Application.Json.toString())
-                }
+                jsonHeaders()
                 setBody(
                     SpoolWithFirstUsed(
                         spoolId,
@@ -123,20 +112,25 @@ class SpoolmanApi(
             }.valid(SpoolNotFound(spoolId))
             .body<SpoolWithFirstUsed>()
 
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     suspend fun useFilament(
         spoolId: Int,
         weight: Int
     ) = httpClient
         .request(apiConfig.spoolPrefix + "$spoolId/use") {
             method = HttpMethod.Put
-            headers {
-                append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                append(HttpHeaders.Accept, ContentType.Application.Json.toString())
-            }
+            jsonHeaders()
             setBody(UseSpoolFilament(weight))
         }.valid(SpoolNotFound(spoolId))
         .body<SpoolWithLocationAndFirstUsed>()
+
+    @PublishedApi
+    internal fun HttpRequestBuilder.jsonHeaders() {
+        headers {
+            append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            append(HttpHeaders.Accept, ContentType.Application.Json.toString())
+        }
+    }
 }
 
 fun spoolmanApi(

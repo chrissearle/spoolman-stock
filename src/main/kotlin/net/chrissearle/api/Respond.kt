@@ -18,28 +18,32 @@ import net.chrissearle.logApiError
 private val logger = KotlinLogging.logger {}
 
 context(context: RoutingContext)
-suspend inline fun <reified A : Any> Either<ApiError, A>.respond(status: HttpStatusCode = HttpStatusCode.OK) =
-    when (this) {
-        is Either.Left -> context.respond(value)
-        is Either.Right -> context.call.respond(status, value)
-    }
+suspend inline fun <reified A : Any> Either<ApiError, A>.respond(status: HttpStatusCode = HttpStatusCode.OK) {
+    onLeft { context.respond(it) }
+    onRight { context.call.respond(status, it) }
+}
+
+context(context: RoutingContext)
+suspend fun Either<ApiError, String>.redirect(permanent: Boolean = false) {
+    onLeft { context.respond(it) }
+    onRight { context.call.respondRedirect(it, permanent) }
+}
 
 suspend fun RoutingContext.respond(error: ApiError) =
     call.respond(error.status(), error.messageMap()).also { logger.logApiError(error) }
 
 context(context: RoutingContext)
+suspend fun Either<ApiError, String>.respondPlainText(status: HttpStatusCode = HttpStatusCode.OK) {
+    onLeft { context.respond(it) }
+    onRight { context.call.respondText(status = status, text = it) }
+}
+
+context(context: RoutingContext)
 suspend inline fun <reified A : Any> Either<ApiError, A>.respondHtml(noinline block: HTML.(A) -> Unit) {
-    when (this) {
-        is Either.Left -> {
-            context.respond(this.value)
-        }
-
-        is Either.Right -> {
-            val payload = this.value
-
-            context.call.respondHtml {
-                block(payload)
-            }
+    onLeft { context.respond(it) }
+    onRight {
+        context.call.respondHtml {
+            block(it)
         }
     }
 }
@@ -50,47 +54,19 @@ suspend fun Either<ApiError, ByteArray>.respondBytes(
     contentDisposition: ContentDisposition? = null,
     status: HttpStatusCode = HttpStatusCode.OK,
 ) {
-    when (this) {
-        is Either.Left -> {
-            context.respond(this.value)
-        }
-
-        is Either.Right -> {
-            contentDisposition?.let {
-                context.call.response.headers.append(
-                    HttpHeaders.ContentDisposition,
-                    it.toString()
-                )
-            }
-
-            context.call.respondBytes(
-                bytes = this.value,
-                contentType = contentType,
-                status = status
+    onLeft { context.respond(it) }
+    onRight {
+        contentDisposition?.let { disposition ->
+            context.call.response.headers.append(
+                HttpHeaders.ContentDisposition,
+                disposition.toString()
             )
         }
+
+        context.call.respondBytes(
+            bytes = it,
+            contentType = contentType,
+            status = status
+        )
     }
 }
-
-context(context: RoutingContext)
-suspend fun <A> Either<ApiError, A>.redirect(
-    url: String,
-    permanent: Boolean = false,
-) {
-    when (this) {
-        is Either.Left -> {
-            context.respond(this.value)
-        }
-
-        is Either.Right -> {
-            context.call.respondRedirect(url, permanent)
-        }
-    }
-}
-
-context(context: RoutingContext)
-suspend inline fun Either<ApiError, String>.respondPlainText(status: HttpStatusCode = HttpStatusCode.OK) =
-    when (this) {
-        is Either.Left -> context.respond(value)
-        is Either.Right -> context.call.respondText(text = value, status = status)
-    }

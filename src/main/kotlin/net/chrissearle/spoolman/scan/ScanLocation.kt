@@ -1,7 +1,7 @@
 package net.chrissearle.spoolman.scan
 
 import arrow.core.raise.either
-import arrow.core.raise.ensure
+import arrow.core.raise.ensureNotNull
 import kotlinx.serialization.Serializable
 import net.chrissearle.api.LocationRequired
 
@@ -12,8 +12,7 @@ data class ScanLocation(
     companion object {
         operator fun invoke(location: String?) =
             either {
-                ensure(!location.isNullOrBlank()) { LocationRequired }
-                ScanLocation(location)
+                ScanLocation(ensureNotNull(location?.takeIf { it.isNotBlank() }) { LocationRequired })
             }
     }
 }

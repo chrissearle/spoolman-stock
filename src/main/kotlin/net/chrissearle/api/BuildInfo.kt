@@ -1,18 +1,19 @@
 package net.chrissearle.api
 
-import arrow.core.getOrElse
 import arrow.core.raise.Raise
-import arrow.core.raise.either
+import arrow.core.raise.catch
+import arrow.core.raise.context.raise
+import arrow.core.raise.context.withError
 
 object BuildInfo {
-    context(raise: Raise<ApiError>)
+    context(_: Raise<ApiError>)
     fun imageTag(): String =
-        either<Throwable, String> {
-            BuildInfo::class.java
-                .getResourceAsStream("/image-tag.txt")
-                ?.use { it.readBytes().decodeToString().trim() }
-                ?: "development"
-        }.getOrElse {
-            raise.raise(VersionNotReadable(it))
+        withError(::VersionNotReadable) {
+            catch({
+                BuildInfo::class.java
+                    .getResourceAsStream("/image-tag.txt")
+                    ?.use { it.readBytes().decodeToString().trim() }
+                    ?: "development"
+            }) { raise(it) }
         }
 }

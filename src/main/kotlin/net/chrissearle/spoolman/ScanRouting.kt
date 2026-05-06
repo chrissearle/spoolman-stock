@@ -79,20 +79,20 @@ private fun ScanContext.toScanPair() =
         location = this.lastLocation
     )
 
-context(raise: Raise<ApiError>)
+context(_: Raise<ApiError>)
 private suspend fun handleScan(
     call: RoutingCall,
     service: SpoolmanService,
     spool: ScanID? = null,
     location: ScanLocation? = null
 ) {
-    var ctx = call.getScanContext()
-
-    ctx =
-        ctx.copy(
-            lastSpool = spool ?: ctx.lastSpool,
-            lastLocation = location ?: ctx.lastLocation
-        )
+    val ctx =
+        call.getScanContext().let { current ->
+            current.copy(
+                lastSpool = spool ?: current.lastSpool,
+                lastLocation = location ?: current.lastLocation,
+            )
+        }
 
     if (ctx.lastLocation != null && ctx.lastSpool != null) {
         service.updateSpoolLocation(ctx.lastSpool, ctx.lastLocation)
