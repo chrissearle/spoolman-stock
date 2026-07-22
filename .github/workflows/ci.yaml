@@ -21,7 +21,7 @@ jobs:
       labels: ${{ steps.meta.outputs.labels }}
 
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - id: short_sha
         name: Compute short-sha tag
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -81,7 +81,7 @@ jobs:
       SHORT_SHA_TAG: ${{ needs.meta.outputs.short_sha_tag }}
 
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Generate build info resource
         run: |
@@ -116,7 +116,7 @@ jobs:
       SHORT_SHA_TAG: ${{ needs.meta.outputs.short_sha_tag }}
 
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Generate build info resource
         run: |
