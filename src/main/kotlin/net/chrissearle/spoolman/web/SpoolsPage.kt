@@ -40,7 +40,7 @@ fun BODY.spoolsBody(spools: List<Spool>) {
                 div {
                     attributes["class"] = "grid gap-4 sm:grid-cols-2 xl:grid-cols-3"
 
-                    val spoolsAtLocation = locationSpools.sortedBy { it.filamentName ?: "" }
+                    val spoolsAtLocation = locationSpools.sortedBy { it.filamentName.orEmpty() }
                     for (item in spoolsAtLocation) {
                         spoolItem(item)
                     }

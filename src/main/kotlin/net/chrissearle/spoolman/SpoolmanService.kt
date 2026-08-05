@@ -12,6 +12,7 @@ import net.chrissearle.spoolman.model.SpoolWeightUsed
 import net.chrissearle.spoolman.model.SpoolWithFirstUsed
 import net.chrissearle.spoolman.model.SpoolWithLocation
 import net.chrissearle.spoolman.model.StockSummary
+import net.chrissearle.spoolman.model.toStockFilament
 import net.chrissearle.spoolman.scan.ScanID
 import net.chrissearle.spoolman.scan.ScanLocation
 
@@ -32,10 +33,10 @@ class SpoolmanService(
                 val matchingSpools = spools.filter { it.filamentId == filament.id }
 
                 StockSummary(
-                    shop = filament.shopUrl!!,
-                    stock = filament.stock!!,
+                    shop = filament.shopUrl,
+                    stock = filament.stock,
                     count = matchingSpools.size,
-                    color = filament.color!!.color(),
+                    color = filament.color.color(),
                     unopened = matchingSpools.count { spool -> !spool.started() },
                     name = filament.name,
                     material = filament.material,
@@ -48,10 +49,7 @@ class SpoolmanService(
     suspend fun stockFilaments() =
         spoolmanApi
             .fetchFilaments()
-            .asSequence()
-            .filter { (it.stock ?: 0) > 0 && !it.shopUrl.isNullOrBlank() && it.color != null }
-            .map { it.copy(shopUrl = it.shopUrl!!.normalizeShopUrl()) }
-            .toList()
+            .mapNotNull { it.toStockFilament() }
             .also { logger.info { "Successfully fetched ${it.count()} stock filaments." } }
 
     context(_: Raise<ApiError>)

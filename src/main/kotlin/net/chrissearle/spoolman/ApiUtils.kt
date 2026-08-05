@@ -1,8 +1,6 @@
 package net.chrissearle.spoolman
 
-fun String?.normalizeShopUrl(): String? {
-    if (this == null) return null
-
+fun String.normalizeShopUrl(): String {
     val s = this.trim()
     var result = s
 

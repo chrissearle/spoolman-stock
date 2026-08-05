@@ -21,7 +21,7 @@ fun BODY.stockBody(stock: List<StockSummary>) {
 
             for (item in stock.sortedWith(
                 compareByDescending<StockSummary> { it.requiredStock }.thenBy {
-                    it.name ?: ""
+                    it.name.orEmpty()
                 }
             )) {
                 spoolItem(item)

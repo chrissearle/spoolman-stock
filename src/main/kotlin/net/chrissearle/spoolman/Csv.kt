@@ -15,16 +15,16 @@ private fun List<List<String>>.toCsv(vararg titles: String) =
         }.toByteArray()
     }
 
-fun List<LocationLabel>.toCsv() = this.map { row -> listOf(row.location, row.link ?: "") }.toCsv("Location", "Link")
+fun List<LocationLabel>.toCsv() = this.map { row -> listOf(row.location, row.link.orEmpty()) }.toCsv("Location", "Link")
 
 fun List<Spool>.toCsv(spoolPrefix: String) =
     this
         .map {
             listOf(
                 it.id.toString(),
-                it.filamentName ?: "",
-                it.filamentMaterial ?: "",
-                it.filamentVendor ?: "",
+                it.filamentName.orEmpty(),
+                it.filamentMaterial.orEmpty(),
+                it.filamentVendor.orEmpty(),
                 "$spoolPrefix${it.id}"
             )
         }.toCsv(

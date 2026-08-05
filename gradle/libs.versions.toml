@@ -2,8 +2,9 @@
 arrow = "2.2.3"
 cohort = "2.9.10"
 dependency_analysis = "3.18.0"
-detekt = "1.23.8"
+detekt = "2.0.0-alpha.6"
 gradle_versions_filter = "0.1.16"
+jacoco = "0.8.15"
 kotest = "6.2.3"
 kotlin_logging = "8.0.4"
 kotlin = "2.4.10"
@@ -67,7 +68,7 @@ test = ["ktor-server-test-host", "kotest", "kotest-assertions", "ktor-client-moc
 
 [plugins]
 dependency-analysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependency_analysis" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }

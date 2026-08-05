@@ -1,14 +1,19 @@
 # syntax=docker/dockerfile:1.26
 
-FROM eclipse-temurin:22-jdk AS build
+FROM eclipse-temurin:25-jdk AS build
 
 WORKDIR /app
 COPY . .
 
-RUN ./gradlew clean build -x test
+RUN ./gradlew clean installDist \
+    && mkdir -p /app/appjar \
+    && mv /app/build/install/stock/lib/stock-*.jar /app/appjar/
 
-FROM eclipse-temurin:22-jre AS deploy
+FROM eclipse-temurin:25-jre AS deploy
 
-COPY --from=build /app/build/libs/stock.jar /opt/app/stock.jar
+COPY --from=build /app/build/install/stock/bin /opt/app/bin
+COPY --from=build /app/build/install/stock/lib /opt/app/lib
 
-CMD ["java", "-jar", "/opt/app/stock.jar"]
+COPY --from=build /app/appjar/ /opt/app/lib/
+
+CMD ["/opt/app/bin/stock"]

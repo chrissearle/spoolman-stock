@@ -54,6 +54,7 @@ fun Application.configureMonitoring(upstreamHealthCheck: UpstreamHealthCheck) {
     }
 
     val readinessChecks =
+        @Suppress("InjectDispatcher")
         HealthCheckRegistry(Dispatchers.IO) {
             register("upstream-api", upstreamHealthCheck, 3.seconds, 10.seconds)
         }
