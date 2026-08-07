@@ -34,13 +34,20 @@ repositories {
 }
 
 dependencies {
+    implementation(platform(libs.opentelemetry.bom))
+
     implementation(libs.bundles.ktor.server)
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.serialization)
     implementation(libs.bundles.monitoring)
     implementation(libs.arrow.core)
     implementation(libs.qrcode.kotlin)
+
+    implementation(libs.opentelemetry.api)
+    implementation(libs.opentelemetry.extension.kotlin)
+
     runtimeOnly(libs.logback.classic)
+    runtimeOnly(libs.logstash.logback.encoder)
 
     testImplementation(libs.bundles.test)
     testRuntimeOnly(libs.kotlin.test.junit)

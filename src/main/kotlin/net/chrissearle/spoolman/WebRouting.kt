@@ -20,6 +20,7 @@ import net.chrissearle.spoolman.web.locationsBody
 import net.chrissearle.spoolman.web.page
 import net.chrissearle.spoolman.web.spoolsBody
 import net.chrissearle.spoolman.web.stockBody
+import net.chrissearle.telemetry.span
 import qrcode.QRCode
 import qrcode.color.Colors
 
@@ -122,7 +123,7 @@ private fun Route.qrRouting(
 
             val label = service.locationLabel(location)
 
-            (label.link ?: label.location).qrBytes()
+            (label.link ?: label.location).qrBytes(location.location)
         }.respondBytes(
             contentType = ContentType.Image.PNG,
             contentDisposition =
@@ -135,10 +136,14 @@ private fun Route.qrRouting(
     }
 }
 
-private fun String.qrBytes() =
-    QRCode
-        .ofSquares()
-        .withBackgroundColor(Colors.WHITE)
-        .build(this)
-        .render()
-        .getBytes()
+private suspend fun String.qrBytes(location: String) =
+    span("qr.render") { current ->
+        current.setAttribute("app.qr.location", location)
+
+        QRCode
+            .ofSquares()
+            .withBackgroundColor(Colors.WHITE)
+            .build(this)
+            .render()
+            .getBytes()
+    }

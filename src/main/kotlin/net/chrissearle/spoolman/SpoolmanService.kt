@@ -15,6 +15,7 @@ import net.chrissearle.spoolman.model.StockSummary
 import net.chrissearle.spoolman.model.toStockFilament
 import net.chrissearle.spoolman.scan.ScanID
 import net.chrissearle.spoolman.scan.ScanLocation
+import net.chrissearle.telemetry.raisingSpan
 
 private val logger = KotlinLogging.logger {}
 
@@ -25,25 +26,31 @@ class SpoolmanService(
     val startLocations: List<String>,
 ) {
     context(_: Raise<ApiError>)
-    suspend fun stockSummaries(): List<StockSummary> {
-        val spools = unarchivedSpools()
+    suspend fun stockSummaries(): List<StockSummary> =
+        raisingSpan("SpoolmanService.stockSummaries") { span ->
+            val spools = unarchivedSpools()
+            val filaments = stockFilaments()
 
-        return stockFilaments()
-            .map { filament ->
-                val matchingSpools = spools.filter { it.filamentId == filament.id }
+            span.setAttribute("app.stock.spools.count", spools.size.toLong())
+            span.setAttribute("app.stock.filaments.count", filaments.size.toLong())
 
-                StockSummary(
-                    shop = filament.shopUrl,
-                    stock = filament.stock,
-                    count = matchingSpools.size,
-                    color = filament.color.color(),
-                    unopened = matchingSpools.count { spool -> !spool.started() },
-                    name = filament.name,
-                    material = filament.material,
-                    vendor = filament.vendor,
-                )
-            }.also { logger.info { "Successfully fetched ${it.count()} stock spools." } }
-    }
+            filaments
+                .map { filament ->
+                    val matchingSpools = spools.filter { it.filamentId == filament.id }
+
+                    StockSummary(
+                        shop = filament.shopUrl,
+                        stock = filament.stock,
+                        count = matchingSpools.size,
+                        color = filament.color.color(),
+                        unopened = matchingSpools.count { spool -> !spool.started() },
+                        name = filament.name,
+                        material = filament.material,
+                        vendor = filament.vendor,
+                    )
+                }.also { span.setAttribute("app.stock.summaries.count", it.size.toLong()) }
+                .also { logger.info { "Successfully fetched ${it.count()} stock spools." } }
+        }
 
     context(_: Raise<ApiError>)
     suspend fun stockFilaments() =
@@ -53,21 +60,30 @@ class SpoolmanService(
             .also { logger.info { "Successfully fetched ${it.count()} stock filaments." } }
 
     context(_: Raise<ApiError>)
-    suspend fun spoolLabels() = unarchivedSpools().map { it.toLabel(scanConfig.spoolPrefix) }
+    suspend fun spoolLabels() =
+        raisingSpan("SpoolmanService.spoolLabels") { span ->
+            unarchivedSpools()
+                .map { it.toLabel(scanConfig.spoolPrefix) }
+                .also { span.setAttribute("app.labels.count", it.size.toLong()) }
+        }
 
     context(_: Raise<ApiError>)
     suspend fun locationLabels(includeClear: Boolean = false) =
-        spoolmanApi
-            .fetchLocations()
-            .map { LocationLabel(it, "${scanConfig.locationPrefix}$it") }
-            .let { labels -> if (includeClear) labels + LocationLabel("clear", scanConfig.clearUrl) else labels }
-            .let {
-                if (it.none { label -> label.location == "Ext" }) {
-                    it + LocationLabel("Ext", "${scanConfig.locationPrefix}/Ext")
-                } else {
-                    it
-                }
-            }
+        raisingSpan("SpoolmanService.locationLabels") { span ->
+            span.setAttribute("app.labels.include_clear", includeClear)
+
+            spoolmanApi
+                .fetchLocations()
+                .map { LocationLabel(it, "${scanConfig.locationPrefix}$it") }
+                .let { labels -> if (includeClear) labels + LocationLabel("clear", scanConfig.clearUrl) else labels }
+                .let {
+                    if (it.none { label -> label.location == "Ext" }) {
+                        it + LocationLabel("Ext", "${scanConfig.locationPrefix}/Ext")
+                    } else {
+                        it
+                    }
+                }.also { span.setAttribute("app.labels.count", it.size.toLong()) }
+        }
 
     context(_: Raise<ApiError>)
     suspend fun locationLabel(location: ScanLocation) =
@@ -106,25 +122,39 @@ class SpoolmanService(
     suspend fun updateSpoolLocation(
         spool: ScanID,
         location: ScanLocation
-    ): SpoolWithLocation {
-        val updateLocation = spoolmanApi.updateLocation(spool.id, location.location)
+    ): SpoolWithLocation =
+        raisingSpan("SpoolmanService.updateSpoolLocation") { span ->
+            span.setAttribute("app.spool.id", spool.id.toLong())
+            span.setAttribute("app.spool.location", location.location)
 
-        if (startLocations.contains(updateLocation.location) && updateLocation.firstUsed.isNullOrBlank()) {
-            updateSpoolFirstUsed(updateLocation.id)
+            val updateLocation = spoolmanApi.updateLocation(spool.id, location.location)
+
+            val setFirstUsed =
+                startLocations.contains(updateLocation.location) && updateLocation.firstUsed.isNullOrBlank()
+
+            if (setFirstUsed) {
+                updateSpoolFirstUsed(updateLocation.id)
+            }
+
+            span.setAttribute("app.spool.first_used.set", setFirstUsed)
+
+            SpoolWithLocation(
+                id = updateLocation.id,
+                location = updateLocation.location
+            )
         }
-
-        return SpoolWithLocation(
-            id = updateLocation.id,
-            location = updateLocation.location
-        )
-    }
 
     context(_: Raise<ApiError>)
     suspend fun updateSpoolFirstUsed(spool: Int): SpoolWithFirstUsed = spoolmanApi.updateFirstUsed(spool)
 
     context(_: Raise<ApiError>)
     suspend fun useSpoolWeight(spoolWeightUsed: SpoolWeightUsed) {
-        spoolmanApi.useFilament(spoolWeightUsed.id, spoolWeightUsed.weight)
+        raisingSpan("SpoolmanService.useSpoolWeight") { span ->
+            span.setAttribute("app.spool.id", spoolWeightUsed.id.toLong())
+            span.setAttribute("app.spool.weight", spoolWeightUsed.weight.toLong())
+
+            spoolmanApi.useFilament(spoolWeightUsed.id, spoolWeightUsed.weight)
+        }
     }
 }
 

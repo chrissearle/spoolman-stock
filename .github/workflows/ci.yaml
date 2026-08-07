@@ -44,11 +44,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - name: Set up JDK
-        uses: actions/setup-java@v5
-        with:
-          java-version: '25'
-          distribution: 'temurin'
+      - name: Setup mise
+        uses: jdx/mise-action@v4
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
