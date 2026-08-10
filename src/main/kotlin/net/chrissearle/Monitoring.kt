@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import net.chrissearle.api.BuildInfo
 import net.chrissearle.api.respondPlainText
 import org.slf4j.event.Level
+import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
 private val logger = KotlinLogging.logger {}
@@ -30,6 +31,7 @@ fun Application.configureMonitoring(upstreamHealthCheck: UpstreamHealthCheck) {
     }
     install(CallId) {
         header(HttpHeaders.XRequestId)
+        generate { UUID.randomUUID().toString() }
         verify { callId: String ->
             callId.isNotEmpty()
         }
