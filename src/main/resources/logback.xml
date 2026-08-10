@@ -1,4 +1,6 @@
 <configuration>
+    <property resource="build-info.properties"/>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSSXXX</timestampPattern>
@@ -12,6 +14,7 @@
                 <version>[ignore]</version>
                 <levelValue>[ignore]</levelValue>
             </fieldNames>
+            <customFields>{"service.version":"${image.tag:-development}"}</customFields>
             <includeContext>false</includeContext>
             <findAndRegisterJacksonModules>false</findAndRegisterJacksonModules>
         </encoder>

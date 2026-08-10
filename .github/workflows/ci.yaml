@@ -83,7 +83,7 @@ jobs:
       - name: Generate build info resource
         run: |
           mkdir -p src/main/resources
-          echo "${SHORT_SHA_TAG}" > src/main/resources/image-tag.txt
+          echo "image.tag=${SHORT_SHA_TAG}" > src/main/resources/build-info.properties
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -118,7 +118,7 @@ jobs:
       - name: Generate build info resource
         run: |
           mkdir -p src/main/resources
-          echo "${SHORT_SHA_TAG}" > src/main/resources/image-tag.txt
+          echo "image.tag=${SHORT_SHA_TAG}" > src/main/resources/build-info.properties
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
