@@ -13,8 +13,7 @@ private val json =
         isLenient = true
     }
 
-private fun spoolJson(price: String) =
-    """{"id": 1, "archived": false, "price": $price, "filament.id": 2}"""
+private fun spoolJson(price: String) = """{"id": 1, "archived": false, "price": $price, "filament.id": 2}"""
 
 private fun priceOf(price: String) = json.decodeFromString<Spool>(spoolJson(price)).price
 
