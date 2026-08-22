@@ -9,7 +9,8 @@ data class Spool(
     val archived: Boolean,
     val location: String? = null,
     val comment: String? = null,
-    val price: Int? = null,
+    @Serializable(with = LenientDoubleSerializer::class)
+    val price: Double? = null,
     @SerialName("filament.id")
     val filamentId: Int,
     @SerialName("filament.name")
