@@ -16,7 +16,7 @@ ktor = "3.6.0"
 logback = "1.6.6"
 logstash_encoder = "9.0"
 mockk = "1.14.11"
-opentelemetry_instrumentation = "2.33.0"
+opentelemetry_instrumentation = "2.33.1"
 qrcode = "4.5.0"
 
 [libraries]
