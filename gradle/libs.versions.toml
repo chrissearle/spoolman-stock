@@ -13,8 +13,7 @@ kotlinx_datetime = "0.8.0"
 kotlinx_serialization = "1.12.0"
 kotlinx_serialization_csv = "3.2.2"
 ktor = "3.6.0"
-logback = "1.6.6"
-logstash_encoder = "9.0"
+log4j2 = "2.26.1"
 mockk = "1.14.11"
 opentelemetry_instrumentation = "2.33.1"
 qrcode = "4.5.0"
@@ -46,8 +45,10 @@ kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx_serialization" }
 kotlinx-serialization-csv = { group = "de.brudaswen.kotlinx.serialization", name = "kotlinx-serialization-csv", version.ref = "kotlinx_serialization_csv" }
 
-logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
-logstash-logback-encoder = { group = "net.logstash.logback", name = "logstash-logback-encoder", version.ref = "logstash_encoder" }
+log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j2" }
+log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j2" }
+log4j-layout-template-json = { group = "org.apache.logging.log4j", name = "log4j-layout-template-json", version.ref = "log4j2" }
+log4j-slf4j2-impl = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version.ref = "log4j2" }
 
 opentelemetry-bom = { group = "io.opentelemetry.instrumentation", name = "opentelemetry-instrumentation-bom", version.ref = "opentelemetry_instrumentation" }
 opentelemetry-api = { group = "io.opentelemetry", name = "opentelemetry-api" }
@@ -63,6 +64,7 @@ ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 [bundles]
+logging = ["log4j-api", "log4j-core", "log4j-layout-template-json", "log4j-slf4j2-impl"]
 ktor-server = ["ktor-server-call-id", "ktor-server-call-logging", "ktor-server-content-negotiation", "ktor-server-core", "ktor-server-cio", "ktor-server-status-pages", "ktor-server-html-builder", "ktor-server-sessions"]
 ktor-client = ["ktor-client-content-negotiation", "ktor-client-core", "ktor-client-logging", "ktor-client-cio"]
 serialization = ["ktor-serialization", "kotlinx-serialization", "kotlinx-datetime", "kotlinx-serialization-csv"]

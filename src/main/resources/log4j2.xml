@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR">
+    <Appenders>
+        <Console name="stdout_json" target="SYSTEM_OUT">
+            <JsonTemplateLayout eventTemplateUri="classpath:LogstashJsonEventLayoutV1.json">
+                <EventTemplateAdditionalField
+                        key="service.version"
+                        value="${bundle:build-info:image.tag:-development}"/>
+            </JsonTemplateLayout>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.eclipse.jetty" level="WARN"/>
+        <Logger name="io.netty" level="WARN"/>
+        <Logger name="io.ktor.client" level="WARN"/>
+
+        <Root level="INFO">
+            <AppenderRef ref="stdout_json"/>
+        </Root>
+    </Loggers>
+</Configuration>

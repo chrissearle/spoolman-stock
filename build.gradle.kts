@@ -46,8 +46,7 @@ dependencies {
     implementation(libs.opentelemetry.api)
     implementation(libs.opentelemetry.extension.kotlin)
 
-    runtimeOnly(libs.logback.classic)
-    runtimeOnly(libs.logstash.logback.encoder)
+    runtimeOnly(libs.bundles.logging)
 
     testImplementation(libs.bundles.test)
     testRuntimeOnly(libs.kotlin.test.junit)

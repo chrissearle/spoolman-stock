@@ -16,4 +16,6 @@ COPY --from=build /app/build/install/stock/lib /opt/app/lib
 
 COPY --from=build /app/appjar/ /opt/app/lib/
 
+ENV JAVA_OPTS="-Duser.timezone=UTC"
+
 CMD ["/opt/app/bin/stock"]
